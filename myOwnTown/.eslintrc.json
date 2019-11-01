@@ -1,0 +1,35 @@
+{
+    "root": true,
+    "env": {
+        "browser": true,
+        "es6": true
+    },
+    "extends": [
+        "standard",
+        "prettier",
+        "prettier/flowtype",
+        "prettier/react",
+        "prettier/standard"
+      ],
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module"
+    },
+    "plugins": [
+        "@typescript-eslint",
+        "react",
+        "react-native",
+        "prettier",
+        "standard"
+    ],
+    "overrides": [
+        {
+          "files": ["__tests__/*.js"],
+          "rules": {
+            "require-jsdoc": "off"
+          }
+        }
+      ]
+      
+}
