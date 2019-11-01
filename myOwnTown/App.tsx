@@ -2,6 +2,7 @@ import React from 'react';
 import { StyleSheet, View, Image } from 'react-native';
 import { Icon } from 'react-native-elements';
 import BottomNavigation, { FullTab } from 'react-native-material-bottom-navigation';
+
 export default class App extends React.Component {
   tabs = [
     {
