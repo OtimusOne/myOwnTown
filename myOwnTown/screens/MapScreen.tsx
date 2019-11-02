@@ -1,44 +1,82 @@
 import React from 'react';
-import MapView from 'react-native-maps';
+import MapView, { Marker, Region, MarkerProps } from 'react-native-maps';
+import { View } from 'react-native';
 
-export default class MapScreen extends React.Component {
+interface Props {}
+interface State {
+  region?: Region;
+  markers?: MarkerProps[];
+}
+export default class MapScreen extends React.Component<Props, State> {
   constructor(props) {
     super(props);
     this.state = {
       region: {
-        latitude: 37.78825,
-        longitude: -122.4324,
+        latitude: 45.760696,
+        longitude: 21.226788,
         latitudeDelta: 0.0922,
         longitudeDelta: 0.0421,
       },
+      markers: [
+        {
+          identifier: '0',
+          coordinate: {
+            latitude: 45.760696,
+            longitude: 21.226788,
+          },
+          title: 'title',
+          description: 'description',
+        },
+      ],
     };
+    this.getInitialState = this.getInitialState.bind(this);
   }
 
   getInitialState() {
     return {
       region: {
-        latitude: 37.78825,
-        longitude: -122.4324,
+        latitude: 45.760696,
+        longitude: 21.226788,
         latitudeDelta: 0.0922,
         longitudeDelta: 0.0421,
       },
     };
   }
 
-  onRegionChange(region) {
-    this.setState({ region });
-  }
-
   render() {
     return (
-      <MapView
-        initialRegion={{
-          latitude: 37.78825,
-          longitude: -122.4324,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
+      <View
+        style={{
+          height: '100%',
+          width: '100%',
+          justifyContent: 'flex-end',
+          alignItems: 'center',
         }}
-      />
+      >
+        <MapView
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+          }}
+          region={this.state.region}
+          showsUserLocation={true}
+          showsCompass={true}
+          zoomControlEnabled={true}
+          showsTraffic={true}
+        >
+          {this.state.markers.map(marker => (
+            <Marker
+              key={marker.identifier}
+              coordinate={marker.coordinate}
+              title={marker.title}
+              description={marker.description}
+            />
+          ))}
+        </MapView>
+      </View>
     );
   }
 }

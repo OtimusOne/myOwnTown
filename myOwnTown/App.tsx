@@ -2,6 +2,7 @@ import React from 'react';
 import { StyleSheet, View, Image } from 'react-native';
 import { Icon } from 'react-native-elements';
 import BottomNavigation, { FullTab } from 'react-native-material-bottom-navigation';
+import MapScreen from './screens/MapScreen';
 
 export default class App extends React.Component {
   tabs = [
@@ -43,13 +44,7 @@ export default class App extends React.Component {
     return (
       <View style={{ flex: 1 }}>
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          {this.state.activeTab == 'map' && (
-            <Image
-              resizeMode={'cover'}
-              style={{ width: '100%' }}
-              source={require('./assets/timisoara.png')}
-            />
-          )}
+          {this.state.activeTab == 'map' && <MapScreen />}
           {this.state.activeTab == 'news' && (
             <Image
               resizeMode={'contain'}
