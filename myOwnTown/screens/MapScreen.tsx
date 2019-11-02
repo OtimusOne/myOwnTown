@@ -63,9 +63,10 @@ export default class MapScreen extends React.Component<Props, State> {
           }}
           region={this.state.region}
           showsUserLocation={true}
+          showsMyLocationButton={true}
           showsCompass={true}
           zoomControlEnabled={true}
-          showsTraffic={true}
+          toolbarEnabled={true}
         >
           {this.state.markers.map(marker => (
             <Marker
