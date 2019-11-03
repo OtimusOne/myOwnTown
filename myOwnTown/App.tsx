@@ -1,10 +1,18 @@
 import React from 'react';
-import { StyleSheet, View, Image } from 'react-native';
+import { View, Image } from 'react-native';
 import { Icon } from 'react-native-elements';
 import BottomNavigation, { FullTab } from 'react-native-material-bottom-navigation';
 import MapScreen from './screens/MapScreen';
 
-export default class App extends React.Component {
+interface Props {}
+interface State {
+  activeTab: string;
+}
+
+const newsImage = require('./assets/news.jpg');
+const redditImage = require('./assets/reddit.jpg');
+
+export default class App extends React.Component<Props, State> {
   tabs = [
     {
       key: 'map',
@@ -29,7 +37,12 @@ export default class App extends React.Component {
     },
   ];
 
-  renderIcon = icon => ({ isActive }) => <Icon size={24} color="white" name={icon} />;
+  constructor(props) {
+    super(props);
+    this.state = { activeTab: 'map' };
+  }
+
+  renderIcon = (icon: string) => () => <Icon size={24} color="white" name={icon} />;
 
   renderTab = ({ tab, isActive }) => (
     <FullTab
@@ -39,29 +52,21 @@ export default class App extends React.Component {
       renderIcon={this.renderIcon(tab.icon)}
     />
   );
-  state = { activeTab: 'map' };
+
   render() {
     return (
       <View style={{ flex: 1 }}>
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          {this.state.activeTab == 'map' && <MapScreen />}
-          {this.state.activeTab == 'news' && (
-            <Image
-              resizeMode={'contain'}
-              style={{ width: '100%' }}
-              source={require('./assets/news.jpg')}
-            />
+          {this.state.activeTab === 'map' && <MapScreen />}
+          {this.state.activeTab === 'news' && (
+            <Image resizeMode="contain" style={{ width: '100%' }} source={newsImage} />
           )}
-          {this.state.activeTab == 'votes' && (
-            <Image
-              resizeMode={'contain'}
-              style={{ width: '100%' }}
-              source={require('./assets/reddit.jpg')}
-            />
+          {this.state.activeTab === 'votes' && (
+            <Image resizeMode="contain" style={{ width: '100%' }} source={redditImage} />
           )}
         </View>
         <BottomNavigation
-          onTabPress={newTab => this.setState({ activeTab: newTab.key })}
+          onTabPress={newTab => this.setState({ activeTab: newTab.key.toString() })}
           renderTab={this.renderTab}
           tabs={this.tabs}
         />
@@ -69,7 +74,7 @@ export default class App extends React.Component {
     );
   }
 }
-
+/*
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -78,3 +83,4 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
+*/

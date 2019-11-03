@@ -6,11 +6,11 @@
   },
   "extends": [
     "airbnb",
-    "standard",
     "prettier",
     "prettier/flowtype",
     "prettier/react",
-    "prettier/standard"
+    "prettier/standard",
+    "eslint:recommended"
   ],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
@@ -28,6 +28,17 @@
   ],
   "rules": {
     "no-use-before-define": "off",
-    "comma-dangle": "off"
+    "no-unused-vars": "off",
+    "comma-dangle": "off",
+    "react/jsx-filename-extension": "off",
+    "react/destructuring-assignment": "off"
+  },
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "extensions": [".js", ".jsx", ".ts", ".tsx"],
+        "paths": ["./src"]
+      }
+    }
   }
 }

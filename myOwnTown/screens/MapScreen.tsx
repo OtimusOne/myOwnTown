@@ -1,5 +1,5 @@
 import React from 'react';
-import MapView, { Marker, Region, MarkerProps } from 'react-native-maps';
+import MapView, { Marker, MarkerProps, Region } from 'react-native-maps';
 import { View } from 'react-native';
 
 interface Props {}
@@ -62,11 +62,11 @@ export default class MapScreen extends React.Component<Props, State> {
             bottom: 0,
           }}
           region={this.state.region}
-          showsUserLocation={true}
-          showsMyLocationButton={true}
-          showsCompass={true}
-          zoomControlEnabled={true}
-          toolbarEnabled={true}
+          showsUserLocation
+          showsMyLocationButton
+          showsCompass
+          zoomControlEnabled
+          toolbarEnabled
         >
           {this.state.markers.map(marker => (
             <Marker
