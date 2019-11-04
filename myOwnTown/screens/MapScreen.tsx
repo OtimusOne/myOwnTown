@@ -34,6 +34,8 @@ const actions = [
 ];
 
 export default class MapScreen extends React.Component<Props, State> {
+  mapRef: React.RefObject<MapView>;
+
   constructor(props) {
     super(props);
     this.state = {
@@ -57,6 +59,7 @@ export default class MapScreen extends React.Component<Props, State> {
 
     };
     this.getInitialState = this.getInitialState.bind(this);
+    this.mapRef = React.createRef();
   }
 
     getInitialState() {
@@ -76,6 +79,7 @@ export default class MapScreen extends React.Component<Props, State> {
 
   shouldComponentUpdate(nextProps, nextState) {
     return this.state.coordinate === nextState.coordinate;
+
   }
 
   getMarkers = () =>
@@ -109,6 +113,7 @@ export default class MapScreen extends React.Component<Props, State> {
             right: 0,
             bottom: 0,
           }}
+          ref={(r) => {this.mapRef.current = r}}
           region={this.state.region}
           showsUserLocation
           showsMyLocationButton
@@ -125,14 +130,12 @@ export default class MapScreen extends React.Component<Props, State> {
               description={marker.description}
             />
           ))}
-          <Marker draggable
-                  coordinate={this.state.markers[0].coordinate}
-          />
+
         </MapView>
         <FloatingAction
             actions={actions}
             onPressItem={name => {
-              console.log(`selected button: ${name}`);
+              console.log( "Da");
             }}
         />
       </View>
