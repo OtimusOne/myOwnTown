@@ -10,6 +10,9 @@ interface State {
   markers?: MarkerProps[];
   coordinate?: LatLng;
 }
+interface owrRefObject<T>{
+  current: T | null;
+}
 const actions = [
   {
     text: "Accessibility",
@@ -34,7 +37,7 @@ const actions = [
 ];
 
 export default class MapScreen extends React.Component<Props, State> {
-  mapRef: React.RefObject<MapView>;
+  mapRef: owrRefObject<MapView>;
 
   constructor(props) {
     super(props);
