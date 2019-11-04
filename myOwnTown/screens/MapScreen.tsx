@@ -1,8 +1,8 @@
 import React from 'react';
-import MapView, {Camera, LatLng, Marker, MarkerProps, Region} from 'react-native-maps';
+import MapView, { Camera, LatLng, Marker, MarkerProps, Region } from 'react-native-maps';
 import { View } from 'react-native';
-import { FloatingAction } from "react-native-floating-action";
-import {firestore} from "../dbconfig"
+import { FloatingAction } from 'react-native-floating-action';
+import { firestore } from '../dbconfig';
 
 interface Props {}
 interface State {
@@ -10,30 +10,30 @@ interface State {
   markers?: MarkerProps[];
   coordinate?: LatLng;
 }
-interface owrRefObject<T>{
+interface owrRefObject<T> {
   current: T | null;
 }
 const actions = [
   {
-    text: "Accessibility",
-    name: "bt_accessibility",
-    position: 2
+    text: 'Accessibility',
+    name: 'bt_accessibility',
+    position: 2,
   },
   {
-    text: "Language",
-    name: "bt_language",
-    position: 1
+    text: 'Language',
+    name: 'bt_language',
+    position: 1,
   },
   {
-    text: "Location",
-    name: "bt_room",
-    position: 3
+    text: 'Location',
+    name: 'bt_room',
+    position: 3,
   },
   {
-    text: "Video",
-    name: "bt_videocam",
-    position: 4
-  }
+    text: 'Video',
+    name: 'bt_videocam',
+    position: 4,
+  },
 ];
 
 export default class MapScreen extends React.Component<Props, State> {
@@ -59,13 +59,12 @@ export default class MapScreen extends React.Component<Props, State> {
           description: 'description',
         },
       ],
-
     };
     this.getInitialState = this.getInitialState.bind(this);
     this.mapRef = React.createRef();
   }
 
-    getInitialState() {
+  getInitialState() {
     return {
       region: {
         latitude: 45.760696,
@@ -77,25 +76,26 @@ export default class MapScreen extends React.Component<Props, State> {
   }
 
   componentDidMount(): void {
-      this.getMarkers();
+    this.getMarkers();
   }
 
   shouldComponentUpdate(nextProps, nextState) {
     return this.state.coordinate === nextState.coordinate;
-
   }
 
-  getMarkers = () =>
-  {
-    firestore.collection("markers").get().then(snap =>{
-      const markers = [];
-      snap.forEach(entry => {
-        const {coordinate, title, description} = entry.data();
-        const {id} = entry;
-        markers.push({coordinate, title, description, identifier: id});
+  getMarkers = () => {
+    firestore
+      .collection('markers')
+      .get()
+      .then(snap => {
+        const markers = [];
+        snap.forEach(entry => {
+          const { coordinate, title, description } = entry.data();
+          const { id } = entry;
+          markers.push({ coordinate, title, description, identifier: id });
+        });
+        this.setState({ markers });
       });
-      this.setState({markers})
-    });
   };
 
   render() {
@@ -116,14 +116,16 @@ export default class MapScreen extends React.Component<Props, State> {
             right: 0,
             bottom: 0,
           }}
-          ref={(r) => {this.mapRef.current = r}}
+          ref={r => {
+            this.mapRef.current = r;
+          }}
           region={this.state.region}
           showsUserLocation
           showsMyLocationButton
           showsCompass
           zoomControlEnabled
           toolbarEnabled
-          onMarkerDragEnd = {e => this.setState(e.nativeEvent)}
+          onMarkerDragEnd={e => this.setState(e.nativeEvent)}
         >
           {this.state.markers.map(marker => (
             <Marker
@@ -133,13 +135,12 @@ export default class MapScreen extends React.Component<Props, State> {
               description={marker.description}
             />
           ))}
-
         </MapView>
         <FloatingAction
-            actions={actions}
-            onPressItem={name => {
-              console.log( "Da");
-            }}
+          actions={actions}
+          onPressItem={name => {
+            console.log('Da');
+          }}
         />
       </View>
     );
