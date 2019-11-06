@@ -49,28 +49,13 @@ interface owrRefObject<T> {
   current: T | null;
 }
 
-const actions = [
-  {
-    text: 'Accessibility',
-    name: 'bt_accessibility',
-    position: 2,
-  },
-  {
-    text: 'Language',
-    name: 'bt_language',
-    position: 1,
-  },
-  {
-    text: 'Location',
-    name: 'bt_room',
-    position: 3,
-  },
-  {
-    text: 'Video',
-    name: 'bt_videocam',
-    position: 4,
-  },
-];
+// const actions = [
+//   {
+//     text: 'Language',
+//     name: 'bt_language',
+//     position: 1,
+//   }
+// ];
 
 export default class MapScreen extends React.Component<Props, State> {
   mapRef: owrRefObject<MapView>;
@@ -131,13 +116,13 @@ export default class MapScreen extends React.Component<Props, State> {
       longitude: long,
       latitudeDelta: 0.005,
       longitudeDelta: 0.005,
-    }, 900);
+    }, 600);
     setTimeout(() => {
       this.mapRef.current.getCamera().then(camera => {
         this.setState({markers});
         this.mapRef.current.setCamera(camera);
       });
-    },950);
+    },650);
   };
 
   getMarkers = () => {
@@ -179,7 +164,12 @@ export default class MapScreen extends React.Component<Props, State> {
           region={this.state.region}
           showsMyLocationButton
           showsCompass
-          onPress={(mapEvent) => this.addMarker(mapEvent.nativeEvent.coordinate.latitude, mapEvent.nativeEvent.coordinate.longitude)}
+          onPress={(mapEvent) => {
+            // issue when clicking on a marker, it will add a temp one on it
+            // if a marker is within a minimum distance of my click, we should not add another one
+            // gotta figure out
+            this.addMarker(mapEvent.nativeEvent.coordinate.latitude, mapEvent.nativeEvent.coordinate.longitude)
+          }}
           zoomControlEnabled
           toolbarEnabled
           onMarkerDragEnd={e => this.setState(e.nativeEvent)}
@@ -199,17 +189,18 @@ export default class MapScreen extends React.Component<Props, State> {
           ))}
         </MapView>
         <FloatingAction
-          actions={actions}
-          onPressItem={() => {
+          showBackground={false}
+          onOpen={() => {
             navigator.geolocation.getCurrentPosition(position => {
               this.mapRef.current.animateToRegion({
                 latitude: position.coords.latitude,
                 longitude: position.coords.longitude,
                 latitudeDelta: 0.005,
                 longitudeDelta: 0.005,
-              }, 1000);
+              }, 600);
             });
           }}
+          onClose={() => this.mapRef.current.animateToRegion(this.getInitialState().region, 600)}
         />
       </View>
     );
