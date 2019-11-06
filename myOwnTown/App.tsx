@@ -3,13 +3,12 @@ import { View, Image } from 'react-native';
 import { Icon } from 'react-native-elements';
 import BottomNavigation, { FullTab } from 'react-native-material-bottom-navigation';
 import MapScreen from './screens/MapScreen';
+import NewsScreen from './screens/NewsScreen';
 
 interface Props {}
 interface State {
   activeTab: string;
 }
-
-const newsImage = require('./assets/news.jpg');
 const redditImage = require('./assets/reddit.jpg');
 
 export default class App extends React.Component<Props, State> {
@@ -39,7 +38,7 @@ export default class App extends React.Component<Props, State> {
 
   constructor(props) {
     super(props);
-    this.state = { activeTab: 'map' };
+    this.state = { activeTab: 'news' };
   }
 
   renderIcon = (icon: string) => () => <Icon size={24} color="white" name={icon} />;
@@ -58,9 +57,7 @@ export default class App extends React.Component<Props, State> {
       <View style={{ flex: 1 }}>
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
           {this.state.activeTab === 'map' && <MapScreen />}
-          {this.state.activeTab === 'news' && (
-            <Image resizeMode="contain" style={{ width: '100%' }} source={newsImage} />
-          )}
+          {this.state.activeTab === 'news' && <NewsScreen />}
           {this.state.activeTab === 'votes' && (
             <Image resizeMode="contain" style={{ width: '100%' }} source={redditImage} />
           )}

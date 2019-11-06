@@ -55,7 +55,7 @@ export default class MapScreen extends React.Component<Props, State> {
             latitude: 45.760696,
             longitude: 21.226788,
           },
-          draggable:false,
+          draggable: false,
           title: 'title',
           description: 'description',
         },
@@ -84,16 +84,22 @@ export default class MapScreen extends React.Component<Props, State> {
     return this.state.coordinate === nextState.coordinate;
   }
 
-  updateUserLocation = (succ) => {
-    console.log(succ)
+  updateUserLocation = succ => {
+    // console.log(succ)
   };
 
   addMarker = (lat, long) => {
-    const {markers} = this.state;
-    markers.push({identifier: "temp", coordinate: {latitude: lat, longitude: long}, title:"", description: "", draggable:true});
-    this.setState({markers});
+    const { markers } = this.state;
+    markers.push({
+      identifier: 'temp',
+      coordinate: { latitude: lat, longitude: long },
+      title: '',
+      description: '',
+      draggable: true,
+    });
+    this.setState({ markers });
   };
-  
+
   getMarkers = () => {
     firestore
       .collection('markers')
@@ -103,7 +109,7 @@ export default class MapScreen extends React.Component<Props, State> {
         snap.forEach(entry => {
           const { coordinate, title, description } = entry.data();
           const { id } = entry;
-          markers.push({ coordinate, title, description, identifier: id, draggable:false });
+          markers.push({ coordinate, title, description, identifier: id, draggable: false });
         });
         this.setState({ markers });
       });
@@ -152,12 +158,15 @@ export default class MapScreen extends React.Component<Props, State> {
           actions={actions}
           onPressItem={name => {
             navigator.geolocation.getCurrentPosition(position => {
-              this.mapRef.current.animateToRegion({
-                latitude: position.coords.latitude,
-                longitude: position.coords.longitude,
-                latitudeDelta: 0.005,
-                longitudeDelta: 0.005,
-              }, 1000);
+              this.mapRef.current.animateToRegion(
+                {
+                  latitude: position.coords.latitude,
+                  longitude: position.coords.longitude,
+                  latitudeDelta: 0.005,
+                  longitudeDelta: 0.005,
+                },
+                1000,
+              );
               this.addMarker(position.coords.latitude, position.coords.longitude);
             });
           }}
