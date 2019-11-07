@@ -31,7 +31,11 @@
     "no-unused-vars": "off",
     "comma-dangle": "off",
     "react/jsx-filename-extension": "off",
-    "react/destructuring-assignment": "off"
+    "react/destructuring-assignment": "off",
+    "no-param-reassign": "off",
+    "one-var": "off",
+    "no-cond-assign": "off",
+    "no-plusplus": "off"
   },
   "settings": {
     "import/resolver": {
