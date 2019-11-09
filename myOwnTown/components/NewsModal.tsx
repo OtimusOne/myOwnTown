@@ -1,15 +1,21 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import NewsModal from './NewsModal';
+import { Overlay } from 'react-native-elements';
+import { AnnouncementProps } from './Announcement';
 
-export interface AnnouncementProps {
+interface newsModalProps {
   id: string;
   title: string;
   description: string;
   createdOn: Date;
   icon?: string;
+  handleClose: () => void;
 }
+interface newsModalState {
+  visible: boolean;
+}
+
 const timeAgo = (time: any): string => {
   switch (typeof time) {
     case 'number':
@@ -62,72 +68,72 @@ const timeAgo = (time: any): string => {
     }
   return time;
 };
-const Announcement: React.SFC<AnnouncementProps> = Props => {
-  const [modalVisible, setModalVisible] = useState(false);
-  const handleCloseModal = () => {
-    setModalVisible(false);
+export default class NewsModal extends React.Component<newsModalProps, newsModalState> {
+  constructor(props) {
+    super(props);
+    this.state = {
+      isVisible: true,
+    };
+    this.onClose = this.onClose.bind(this);
+  }
+
+  onClose = () => {
+    this.setState({ isVisible: false });
+    this.props.handleClose();
   };
-  return (
-    <TouchableOpacity
-      style={{
-        width: '95%',
-        borderWidth: 1,
-        borderColor: '#B71C1C',
-        borderRadius: 20,
-        margin: 5,
-        padding: 5,
-      }}
-      onPress={() => setModalVisible(true)}
-    >
-      {modalVisible && (
-        <NewsModal
-          handleClose={() => handleCloseModal()}
-          id={Props.id}
-          title={Props.title}
-          description={Props.description}
-          icon={Props.icon}
-          createdOn={Props.createdOn}
-        />
-      )}
-      <View
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
+
+  render() {
+    return (
+      <Overlay
+        isVisible={this.state.isVisible}
+        onBackdropPress={this.onClose}
+        overlayStyle={{
+          height: 'auto',
+          borderWidth: 1,
+          borderColor: '#B71C1C',
+          borderRadius: 20,
         }}
       >
-        {Props.icon && <Icon name={Props.icon} size={18} />}
-        <Text
-          style={{
-            paddingLeft: 5,
-            fontSize: 18,
-          }}
-        >
-          {Props.title}
-        </Text>
-      </View>
-      <Text
-        style={{
-          paddingLeft: 5,
-          paddingVertical: 5,
-          fontSize: 14,
-          textAlign: 'justify',
-        }}
-        numberOfLines={3}
-      >
-        {Props.description}
-      </Text>
-      {Props.createdOn && (
-        <Text
-          style={{
-            fontSize: 10,
-            color: 'gray',
-            textAlign: 'right',
-          }}
-        >
-          {timeAgo(Props.createdOn)}
-        </Text>
-      )}
-    </TouchableOpacity>
-  );
-};
-export default Announcement;
+        <View>
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+            }}
+          >
+            {this.props.icon && <Icon name={this.props.icon} size={24} />}
+            <Text
+              style={{
+                paddingHorizontal: 5,
+                fontSize: 22,
+              }}
+            >
+              {this.props.title}
+            </Text>
+          </View>
+          <Text
+            style={{
+              paddingLeft: 5,
+              paddingVertical: 5,
+              fontSize: 16,
+              textAlign: 'justify',
+            }}
+          >
+            {this.props.description}
+          </Text>
+          {this.props.createdOn && (
+            <Text
+              style={{
+                fontSize: 10,
+                color: 'gray',
+                textAlign: 'right',
+              }}
+            >
+              {timeAgo(this.props.createdOn)}
+            </Text>
+          )}
+        </View>
+      </Overlay>
+    );
+  }
+}
