@@ -6,7 +6,7 @@ import MarqueeText from 'react-native-marquee';
 import Announcement, { AnnouncementProps } from '../components/Announcement';
 import { firestore } from '../dbconfig';
 
-interface Props {}
+interface Props { }
 interface State {
   displayedPosts: AnnouncementProps[];
   loadedPosts: AnnouncementProps[];
@@ -120,7 +120,6 @@ export default class NewsScreen extends React.Component<Props, State> {
           <Text
             style={{
               paddingLeft: 5,
-              fontFamily: 'Roboto',
               fontSize: 24,
               color: '#f7e8e8',
             }}
@@ -151,7 +150,6 @@ export default class NewsScreen extends React.Component<Props, State> {
         />
         <MarqueeText
           style={{
-            fontFamily: 'Roboto',
             fontSize: 24,
             backgroundColor: '#be3232',
             color: '#f7e8e8',

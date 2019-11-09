@@ -83,7 +83,6 @@ const Announcement: React.SFC<AnnouncementProps> = Props => {
         <Text
           style={{
             paddingLeft: 5,
-            fontFamily: 'Roboto',
             fontSize: 18,
           }}
         >
@@ -94,7 +93,6 @@ const Announcement: React.SFC<AnnouncementProps> = Props => {
         style={{
           paddingLeft: 5,
           paddingVertical: 5,
-          fontFamily: 'Roboto',
           fontSize: 14,
           textAlign: 'justify',
         }}
@@ -105,7 +103,6 @@ const Announcement: React.SFC<AnnouncementProps> = Props => {
       {Props.createdOn && (
         <Text
           style={{
-            fontFamily: 'Roboto',
             fontSize: 10,
             color: 'gray',
             textAlign: 'right',

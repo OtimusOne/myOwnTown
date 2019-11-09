@@ -201,7 +201,7 @@ export default class MapScreen extends React.Component<Props, State> {
                 },
                 1000,
               );
-              this.addMarker(position.coords.latitude, position.coords.longitude);
+              // this.addMarker(position.coords.latitude, position.coords.longitude);
             });
           }}
           onClose={() => this.mapRef.current.animateToRegion(this.getInitialState().region, 600)}

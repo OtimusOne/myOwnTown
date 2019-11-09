@@ -2,10 +2,10 @@ import React from 'react';
 import { View, Image } from 'react-native';
 import { Icon } from 'react-native-elements';
 import BottomNavigation, { FullTab } from 'react-native-material-bottom-navigation';
-import MapScreen from './screens/MapScreen';
 import NewsScreen from './screens/NewsScreen';
+import MapScreen from './screens/MapScreen';
 
-interface Props {}
+interface Props { }
 interface State {
   activeTab: string;
 }
@@ -38,7 +38,7 @@ export default class App extends React.Component<Props, State> {
 
   constructor(props) {
     super(props);
-    this.state = { activeTab: 'news' };
+    this.state = { activeTab: 'map' };
   }
 
   renderIcon = (icon: string) => () => <Icon size={24} color="white" name={icon} />;
