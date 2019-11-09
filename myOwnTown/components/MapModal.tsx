@@ -64,7 +64,7 @@ export default class MapModalScreen extends React.Component<MapModalProps, State
                              borderRadius: 20,
                          }}>
                     <ScrollView>
-                        {this.state.readyToShow ?
+                        {this.state.readyToShow && this.state.text !== null ?
                             <View>
                                 <Text style={[{alignSelf:"center"},material.title]}>{this.state.title}</Text>
                                 <Text style={[{alignSelf:"center"},material.subheading]}>{this.state.description}</Text>
