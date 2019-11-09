@@ -61,13 +61,17 @@ export default class MapModalScreen extends React.Component<MapModalProps, State
                             <Text style={[{alignSelf:"center"},material.subheading]}>{this.state.description}</Text>
                         {this.state.text !== null ?
                             <View>
-                                <HTML style={{alignSelf:"center",}} html = {this.state.text} imagesMaxWidth={Dimensions.get('window').width - 30}/>
+                                {this.state.text !== null && this.state.text !== undefined &&
+                                <HTML style={{alignSelf: "center",}} html={this.state.text}
+                                      imagesMaxWidth={Dimensions.get('window').width - 30}/>
+                                }
                                 <Button title="Directions"
                                         buttonStyle={{borderRadius:30}}
                                         onPress={() => {
-
-                                                Linking.openURL(`google.navigation:q=${this.state.coordinate.latitude}+${this.state.coordinate.longitude}`);
-
+                                        if(Platform.OS === "ios")
+                                            Linking.openURL(`maps://daddr=${this.state.coordinate.latitude}+${this.state.coordinate.longitude}`);
+                                        else
+                                            Linking.openURL(`google.navigation:q=${this.state.coordinate.latitude}+${this.state.coordinate.longitude}`);
                                         }}/>
                             </View>
                             : <Progress.Pie

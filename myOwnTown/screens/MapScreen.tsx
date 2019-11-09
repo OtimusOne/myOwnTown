@@ -144,7 +144,7 @@ export default class MapScreen extends React.Component<Props, State> {
       .then(snap => {
         const markers = [];
         snap.forEach(entry => {
-          const { coordinate, title, description, icon } = entry.data();
+          const { coordinate, title, description, icon, text } = entry.data();
           const { id } = entry;
           if(coordinate != null && title!= null && description != null && icon!= null && id != null) {
             markers.push({
