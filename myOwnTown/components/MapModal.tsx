@@ -1,13 +1,13 @@
 import React from 'react';
-import {View, Text, Image, ScrollView, Dimensions} from 'react-native';
+import {View, Text, Image, ScrollView, Dimensions, Platform} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { Overlay } from 'react-native-elements';
+import { Overlay,Button } from 'react-native-elements';
 import * as Progress from 'react-native-progress';
 import HTML from 'react-native-render-html';
 import { material } from 'react-native-typography'
-
-import {firestore, storage} from "../dbconfig"
-
+import {Linking} from "expo";
+import {LatLng} from "react-native-maps";
+import {firestore} from "../dbconfig"
 
 
 export interface MapModalProps {
@@ -19,11 +19,8 @@ interface State {
     title:string,
     description:string,
     text:string,
-    imgUrl:string,
     isVisible: boolean,
-    readyToShow: boolean,
-    imgHeight: number,
-    imgWidth: number
+    coordinate: LatLng
 }
 
 export default class MapModalScreen extends React.Component<MapModalProps, State> {
@@ -33,21 +30,17 @@ export default class MapModalScreen extends React.Component<MapModalProps, State
             title: null,
             description: null,
             text: null,
-            imgUrl: null,
+            coordinate: null,
             isVisible: this.props.isVisible,
-            readyToShow:false,
-            imgHeight: 1,
-            imgWidth: 1
         }
     }
 
     componentDidMount() {
         firestore.collection("markers").doc(this.props.id).get().then(async (doc) => {
             if (doc.exists) {
-                const {title, text, description, img} = doc.data();
-                const ref = storage.ref(img);
-                const imgUrl = await ref.getDownloadURL();
-                this.setState({title, text, description, imgUrl});
+                const {title, text, description, coordinate} = doc.data();
+                this.setState({title, text, description,coordinate});
+
             }
         });
     }
@@ -63,13 +56,19 @@ export default class MapModalScreen extends React.Component<MapModalProps, State
                              borderColor: '#388E3C',
                              borderRadius: 20,
                          }}>
-                    <ScrollView>
-                        {this.state.readyToShow && this.state.text !== null ?
+                        <ScrollView>
+                            <Text style={[{alignSelf:"center"},material.title]}>{this.state.title}</Text>
+                            <Text style={[{alignSelf:"center"},material.subheading]}>{this.state.description}</Text>
+                        {this.state.text !== null ?
                             <View>
-                                <Text style={[{alignSelf:"center"},material.title]}>{this.state.title}</Text>
-                                <Text style={[{alignSelf:"center"},material.subheading]}>{this.state.description}</Text>
+                                <HTML style={{alignSelf:"center",}} html = {this.state.text} imagesMaxWidth={Dimensions.get('window').width - 30}/>
+                                <Button title="Directions"
+                                        buttonStyle={{borderRadius:30}}
+                                        onPress={() => {
 
-                                <HTML style={{alignSelf:"center"}} html = {this.state.text} imagesMaxWidth={Dimensions.get('window').width - 30}/>
+                                                Linking.openURL(`google.navigation:q=${this.state.coordinate.latitude}+${this.state.coordinate.longitude}`);
+
+                                        }}/>
                             </View>
                             : <Progress.Pie
                                 style={{alignSelf:"center"}}
@@ -77,8 +76,7 @@ export default class MapModalScreen extends React.Component<MapModalProps, State
                                 indeterminate
                             />
                         }
-                        <Image style={{height: this.state.imgHeight, width: this.state.imgWidth, alignSelf:"center"}} source={{uri: this.state.imgUrl}} onLoadEnd={() => this.setState({readyToShow:true, imgHeight:0, imgWidth:0})}/>
-                    </ScrollView>
+                        </ScrollView>
                 </Overlay>
         )
     }

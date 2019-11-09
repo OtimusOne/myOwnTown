@@ -146,15 +146,16 @@ export default class MapScreen extends React.Component<Props, State> {
         snap.forEach(entry => {
           const { coordinate, title, description, icon } = entry.data();
           const { id } = entry;
-          markers.push({
-            coordinate,
-            title,
-            description,
-            identifier: id,
-            draggable: false,
-            icon,
-            onPress: () => console.log('bv'),
-          });
+          if(coordinate != null && title!= null && description != null && icon!= null && id != null) {
+            markers.push({
+              coordinate,
+              title,
+              description,
+              identifier: id,
+              draggable: false,
+              icon,
+            });
+          }
         });
         this.setState({ markers });
       });
@@ -199,7 +200,7 @@ export default class MapScreen extends React.Component<Props, State> {
               title={marker.title}
               description={marker.description}
               draggable={marker.draggable}
-              onPress={async () => {
+              onCalloutPress={async () => {
                 await this.setState({ modalVisible: true, currentID: marker.identifier });
                 this.mapRef.current.animateToRegion({
                   latitude: marker.coordinate.latitude,
