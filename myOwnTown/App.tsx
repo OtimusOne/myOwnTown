@@ -5,7 +5,7 @@ import BottomNavigation, { FullTab } from 'react-native-material-bottom-navigati
 import NewsScreen from './screens/NewsScreen';
 import MapScreen from './screens/MapScreen';
 
-interface Props { }
+interface Props {}
 interface State {
   activeTab: string;
 }
@@ -54,7 +54,7 @@ export default class App extends React.Component<Props, State> {
 
   render() {
     return (
-      <View style={{ flex: 1 , marginTop: Platform.OS === "ios" ? 24: 0}}>
+      <View style={{ flex: 1, marginTop: Platform.OS === 'ios' ? 24 : 0 }}>
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
           {this.state.activeTab === 'map' && <MapScreen />}
           {this.state.activeTab === 'news' && <NewsScreen />}

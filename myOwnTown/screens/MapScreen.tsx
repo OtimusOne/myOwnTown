@@ -1,19 +1,27 @@
 import React from 'react';
-import MapView, {AnimatedRegion, Callout, LatLng, MapEvent, Marker, Point, Region} from 'react-native-maps';
+import MapView, {
+  AnimatedRegion,
+  Callout,
+  LatLng,
+  MapEvent,
+  Marker,
+  Point,
+  Region,
+} from 'react-native-maps';
 import { View, ImageURISource, ImageRequireSource, Text } from 'react-native';
 import { FloatingAction } from 'react-native-floating-action';
 import { firestore } from '../dbconfig';
-import { iconName2Icon } from "../iconTranslate"
-import MapModal from "../components/MapModal";
+import { iconName2Icon } from '../iconTranslate';
+import MapModal from '../components/MapModal';
 
-interface Props { }
+interface Props {}
 interface ownMarkerProps {
   identifier?: string;
   reuseIdentifier?: string;
   title?: string;
   description?: string;
   image?: ImageURISource | ImageRequireSource;
-  icon?: string,
+  icon?: string;
   opacity?: number;
   pinColor?: string;
   coordinate: LatLng | AnimatedRegion;
@@ -26,14 +34,10 @@ interface ownMarkerProps {
   tracksViewChanges?: boolean;
   tracksInfoWindowChanges?: boolean;
   stopPropagation?: boolean;
-  onPress?: (event: MapEvent<{ action: "marker-press"; id: string }>) => void;
-  onSelect?: (
-    event: MapEvent<{ action: "marker-select"; id: string }>
-  ) => void;
-  onDeselect?: (
-    event: MapEvent<{ action: "marker-deselect"; id: string }>
-  ) => void;
-  onCalloutPress?: (event: MapEvent<{ action: "callout-press" }>) => void;
+  onPress?: (event: MapEvent<{ action: 'marker-press'; id: string }>) => void;
+  onSelect?: (event: MapEvent<{ action: 'marker-select'; id: string }>) => void;
+  onDeselect?: (event: MapEvent<{ action: 'marker-deselect'; id: string }>) => void;
+  onCalloutPress?: (event: MapEvent<{ action: 'callout-press' }>) => void;
   onDragStart?: (event: MapEvent) => void;
   onDrag?: (event: MapEvent) => void;
   onDragEnd?: (event: MapEvent) => void;
@@ -73,8 +77,8 @@ export default class MapScreen extends React.Component<Props, State> {
         longitudeDelta: 0.0421,
       },
       markers: [],
-      modalVisible:false,
-      currentID:null,
+      modalVisible: false,
+      currentID: null,
     };
     this.getInitialState = this.getInitialState.bind(this);
     this.mapRef = React.createRef();
@@ -96,33 +100,35 @@ export default class MapScreen extends React.Component<Props, State> {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    return true ;
+    return true;
   }
 
   addMarker = (lat, long) => {
     const { markers } = this.state;
-    let tempMarker = markers.find(obj => obj.identifier === "temp");
-    if (typeof (tempMarker) === "undefined")
+    let tempMarker = markers.find(obj => obj.identifier === 'temp');
+    if (typeof tempMarker === 'undefined')
       tempMarker = {
-        identifier: "temp",
+        identifier: 'temp',
         coordinate: { latitude: lat, longitude: long },
-        title: "",
-        description: "",
+        title: '',
+        description: '',
         draggable: true,
-        icon: "ball"
-
+        icon: 'ball',
       };
     else {
       markers.splice(markers.indexOf(tempMarker), 1);
       tempMarker.coordinate = { latitude: lat, longitude: long };
     }
     markers.push(tempMarker);
-    this.mapRef.current.animateToRegion({
-      latitude: lat,
-      longitude: long,
-      latitudeDelta: 0.005,
-      longitudeDelta: 0.005,
-    }, 600);
+    this.mapRef.current.animateToRegion(
+      {
+        latitude: lat,
+        longitude: long,
+        latitudeDelta: 0.005,
+        longitudeDelta: 0.005,
+      },
+      600,
+    );
     setTimeout(() => {
       this.mapRef.current.getCamera().then(camera => {
         this.setState({ markers });
@@ -140,7 +146,15 @@ export default class MapScreen extends React.Component<Props, State> {
         snap.forEach(entry => {
           const { coordinate, title, description, icon } = entry.data();
           const { id } = entry;
-          markers.push({ coordinate, title, description, identifier: id, draggable: false, icon, onPress: () => console.log("bv") });
+          markers.push({
+            coordinate,
+            title,
+            description,
+            identifier: id,
+            draggable: false,
+            icon,
+            onPress: () => console.log('bv'),
+          });
         });
         this.setState({ markers });
       });
@@ -170,7 +184,7 @@ export default class MapScreen extends React.Component<Props, State> {
           region={this.state.region}
           showsMyLocationButton
           showsCompass
-          onPress={(mapEvent) => {
+          onPress={mapEvent => {
             // issue when clicking on a marker, it will add a temp one on it
             // if a marker is within a minimum distance of my click, we should not add another one
             // gotta figure out
@@ -186,18 +200,16 @@ export default class MapScreen extends React.Component<Props, State> {
               description={marker.description}
               draggable={marker.draggable}
               onPress={async () => {
-                await this.setState({modalVisible:true, currentID:marker.identifier});
+                await this.setState({ modalVisible: true, currentID: marker.identifier });
                 this.mapRef.current.animateToRegion({
                   latitude: marker.coordinate.latitude,
                   longitude: marker.coordinate.longitude,
                   latitudeDelta: 0.005,
-                  longitudeDelta: 0.005
-                })
+                  longitudeDelta: 0.005,
+                });
               }}
             >
-              <View>
-              {iconName2Icon[marker.icon.toString()]}
-              </View>
+              <View>{iconName2Icon[marker.icon.toString()]}</View>
             </Marker>
           ))}
         </MapView>
@@ -219,19 +231,20 @@ export default class MapScreen extends React.Component<Props, State> {
           }}
           onClose={() => this.mapRef.current.animateToRegion(this.getInitialState().region, 600)}
         />
-        {this.state.modalVisible &&
-        <MapModal
+        {this.state.modalVisible && (
+          <MapModal
             id={this.state.currentID}
             isVisible={this.state.modalVisible}
-            closeModal={() =>
-            {
+            closeModal={() => {
+              /*
               this.mapRef.current.getCamera().then(async camera => {
-                await this.setState({modalVisible:false});
                 this.mapRef.current.setCamera(camera);
               });
+              */
+              this.setState({ modalVisible: false });
             }}
-        />
-        }
+          />
+        )}
       </View>
     );
   }
