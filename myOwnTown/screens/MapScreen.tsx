@@ -46,6 +46,7 @@ interface State {
   markers?: ownMarkerProps[];
   coordinate?: LatLng;
   modalVisible: boolean;
+  currentID: string;
 }
 interface owrRefObject<T> {
   current: T | null;
@@ -72,7 +73,8 @@ export default class MapScreen extends React.Component<Props, State> {
         longitudeDelta: 0.0421,
       },
       markers: [],
-      modalVisible:false
+      modalVisible:false,
+      currentID:null,
     };
     this.getInitialState = this.getInitialState.bind(this);
     this.mapRef = React.createRef();
@@ -94,7 +96,7 @@ export default class MapScreen extends React.Component<Props, State> {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    return this.state.coordinate === nextState.coordinate;
+    return true ;
   }
 
   addMarker = (lat, long) => {
@@ -184,7 +186,7 @@ export default class MapScreen extends React.Component<Props, State> {
               description={marker.description}
               draggable={marker.draggable}
               onPress={async () => {
-                await this.setState({modalVisible:true});
+                await this.setState({modalVisible:true, currentID:marker.identifier});
                 this.mapRef.current.animateToRegion({
                   latitude: marker.coordinate.latitude,
                   longitude: marker.coordinate.longitude,
@@ -217,11 +219,18 @@ export default class MapScreen extends React.Component<Props, State> {
           }}
           onClose={() => this.mapRef.current.animateToRegion(this.getInitialState().region, 600)}
         />
-
         {this.state.modalVisible &&
-            <MapModal
-                id="aa"
-            />
+        <MapModal
+            id={this.state.currentID}
+            isVisible={this.state.modalVisible}
+            closeModal={() =>
+            {
+              this.mapRef.current.getCamera().then(async camera => {
+                await this.setState({modalVisible:false});
+                this.mapRef.current.setCamera(camera);
+              });
+            }}
+        />
         }
       </View>
     );
