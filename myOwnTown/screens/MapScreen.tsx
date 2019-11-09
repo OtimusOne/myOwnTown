@@ -1,9 +1,10 @@
 import React from 'react';
-import MapView, { AnimatedRegion, LatLng, MapEvent, Marker, Point, Region } from 'react-native-maps';
-import { View, ImageURISource, ImageRequireSource } from 'react-native';
+import MapView, {AnimatedRegion, Callout, LatLng, MapEvent, Marker, Point, Region} from 'react-native-maps';
+import { View, ImageURISource, ImageRequireSource, Text } from 'react-native';
 import { FloatingAction } from 'react-native-floating-action';
 import { firestore } from '../dbconfig';
 import { iconName2Icon } from "../iconTranslate"
+import MapModal from "../components/MapModal";
 
 interface Props { }
 interface ownMarkerProps {
@@ -44,6 +45,7 @@ interface State {
   region?: Region;
   markers?: ownMarkerProps[];
   coordinate?: LatLng;
+  modalVisible: boolean;
 }
 interface owrRefObject<T> {
   current: T | null;
@@ -70,6 +72,7 @@ export default class MapScreen extends React.Component<Props, State> {
         longitudeDelta: 0.0421,
       },
       markers: [],
+      modalVisible:false
     };
     this.getInitialState = this.getInitialState.bind(this);
     this.mapRef = React.createRef();
@@ -105,6 +108,7 @@ export default class MapScreen extends React.Component<Props, State> {
         description: "",
         draggable: true,
         icon: "ball"
+
       };
     else {
       markers.splice(markers.indexOf(tempMarker), 1);
@@ -134,7 +138,7 @@ export default class MapScreen extends React.Component<Props, State> {
         snap.forEach(entry => {
           const { coordinate, title, description, icon } = entry.data();
           const { id } = entry;
-          markers.push({ coordinate, title, description, identifier: id, draggable: false, icon });
+          markers.push({ coordinate, title, description, identifier: id, draggable: false, icon, onPress: () => console.log("bv") });
         });
         this.setState({ markers });
       });
@@ -170,7 +174,7 @@ export default class MapScreen extends React.Component<Props, State> {
             // gotta figure out
             // this.addMarker(mapEvent.nativeEvent.coordinate.latitude, mapEvent.nativeEvent.coordinate.longitude)
           }}
-          onMarkerDragEnd={e => this.setState(e.nativeEvent)}
+          // onMarkerDragEnd={e => this.setState(e.nativeEvent)}
         >
           {this.state.markers.map(marker => (
             <Marker
@@ -179,9 +183,18 @@ export default class MapScreen extends React.Component<Props, State> {
               title={marker.title}
               description={marker.description}
               draggable={marker.draggable}
+              onPress={async () => {
+                await this.setState({modalVisible:true});
+                this.mapRef.current.animateToRegion({
+                  latitude: marker.coordinate.latitude,
+                  longitude: marker.coordinate.longitude,
+                  latitudeDelta: 0.005,
+                  longitudeDelta: 0.005
+                })
+              }}
             >
               <View>
-                {iconName2Icon[marker.icon.toString()]}
+              {iconName2Icon[marker.icon.toString()]}
               </View>
             </Marker>
           ))}
@@ -204,6 +217,12 @@ export default class MapScreen extends React.Component<Props, State> {
           }}
           onClose={() => this.mapRef.current.animateToRegion(this.getInitialState().region, 600)}
         />
+
+        {this.state.modalVisible &&
+            <MapModal
+                id="aa"
+            />
+        }
       </View>
     );
   }
