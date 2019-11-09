@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, Image, ScrollView } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Overlay } from 'react-native-elements';
+import * as Progress from 'react-native-progress';
 import { AnnouncementProps } from './Announcement';
+import { firestore, storage } from '../dbconfig';
 
 interface newsModalProps {
   id: string;
@@ -13,7 +15,9 @@ interface newsModalProps {
   handleClose: () => void;
 }
 interface newsModalState {
-  visible: boolean;
+  isVisible: boolean;
+  imgUrl: string;
+  readyToShow: boolean;
 }
 
 const timeAgo = (time: any): string => {
@@ -73,8 +77,27 @@ export default class NewsModal extends React.Component<newsModalProps, newsModal
     super(props);
     this.state = {
       isVisible: true,
+
+      imgUrl: undefined,
     };
     this.onClose = this.onClose.bind(this);
+  }
+
+  componentDidMount() {
+    firestore
+      .collection('news')
+      .doc(this.props.id)
+      .get()
+      .then(async doc => {
+        if (doc.exists) {
+          const { img } = doc.data();
+          if (img) {
+            const ref = storage.ref(img);
+            const imgUrl = await ref.getDownloadURL();
+            this.setState({ imgUrl });
+          }
+        }
+      });
   }
 
   onClose = () => {
@@ -94,7 +117,7 @@ export default class NewsModal extends React.Component<newsModalProps, newsModal
           borderRadius: 20,
         }}
       >
-        <View>
+        <ScrollView>
           <View
             style={{
               flexDirection: 'row',
@@ -111,16 +134,26 @@ export default class NewsModal extends React.Component<newsModalProps, newsModal
               {this.props.title}
             </Text>
           </View>
-          <Text
-            style={{
-              paddingLeft: 5,
-              paddingVertical: 5,
-              fontSize: 16,
-              textAlign: 'justify',
-            }}
-          >
-            {this.props.description}
-          </Text>
+
+          <View>
+            <Text
+              style={{
+                paddingLeft: 5,
+                paddingVertical: 5,
+                fontSize: 16,
+                textAlign: 'justify',
+              }}
+            >
+              {this.props.description}
+            </Text>
+          </View>
+
+          {this.state.imgUrl && (
+            <Image
+              style={{ height: 200, width: 200, alignSelf: 'center' }}
+              source={{ uri: this.state.imgUrl }}
+            />
+          )}
           {this.props.createdOn && (
             <Text
               style={{
@@ -132,7 +165,7 @@ export default class NewsModal extends React.Component<newsModalProps, newsModal
               {timeAgo(this.props.createdOn)}
             </Text>
           )}
-        </View>
+        </ScrollView>
       </Overlay>
     );
   }
