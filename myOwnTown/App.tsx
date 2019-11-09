@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Image } from 'react-native';
+import { View, Image, Platform } from 'react-native';
 import { Icon } from 'react-native-elements';
 import BottomNavigation, { FullTab } from 'react-native-material-bottom-navigation';
 import NewsScreen from './screens/NewsScreen';
@@ -54,7 +54,7 @@ export default class App extends React.Component<Props, State> {
 
   render() {
     return (
-      <View style={{ flex: 1 }}>
+      <View style={{ flex: 1 , marginTop: Platform.OS === "ios" ? 24: 0}}>
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
           {this.state.activeTab === 'map' && <MapScreen />}
           {this.state.activeTab === 'news' && <NewsScreen />}
