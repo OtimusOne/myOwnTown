@@ -146,7 +146,13 @@ export default class MapScreen extends React.Component<Props, State> {
         snap.forEach(entry => {
           const { coordinate, title, description, icon, text } = entry.data();
           const { id } = entry;
-          if(coordinate != null && title!= null && description != null && icon!= null && id != null) {
+          if (
+            coordinate != null &&
+            title != null &&
+            description != null &&
+            icon != null &&
+            id != null
+          ) {
             markers.push({
               coordinate,
               title,
@@ -230,6 +236,7 @@ export default class MapScreen extends React.Component<Props, State> {
               // this.addMarker(position.coords.latitude, position.coords.longitude);
             });
           }}
+          color="#388E3C"
           onClose={() => this.mapRef.current.animateToRegion(this.getInitialState().region, 600)}
         />
         {this.state.modalVisible && (
