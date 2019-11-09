@@ -1,40 +1,61 @@
 import React from 'react';
-import MapView, { Camera, LatLng, Marker, MarkerProps, Region } from 'react-native-maps';
-import { View } from 'react-native';
+import MapView, { AnimatedRegion, LatLng, MapEvent, Marker, Point, Region } from 'react-native-maps';
+import { View, ImageURISource, ImageRequireSource } from 'react-native';
 import { FloatingAction } from 'react-native-floating-action';
 import { firestore } from '../dbconfig';
+import { iconName2Icon } from "../iconTranslate"
 
-interface Props {}
+interface Props { }
+interface ownMarkerProps {
+  identifier?: string;
+  reuseIdentifier?: string;
+  title?: string;
+  description?: string;
+  image?: ImageURISource | ImageRequireSource;
+  icon?: string,
+  opacity?: number;
+  pinColor?: string;
+  coordinate: LatLng | AnimatedRegion;
+  centerOffset?: Point;
+  calloutOffset?: Point;
+  anchor?: Point;
+  calloutAnchor?: Point;
+  flat?: boolean;
+  draggable?: boolean;
+  tracksViewChanges?: boolean;
+  tracksInfoWindowChanges?: boolean;
+  stopPropagation?: boolean;
+  onPress?: (event: MapEvent<{ action: "marker-press"; id: string }>) => void;
+  onSelect?: (
+    event: MapEvent<{ action: "marker-select"; id: string }>
+  ) => void;
+  onDeselect?: (
+    event: MapEvent<{ action: "marker-deselect"; id: string }>
+  ) => void;
+  onCalloutPress?: (event: MapEvent<{ action: "callout-press" }>) => void;
+  onDragStart?: (event: MapEvent) => void;
+  onDrag?: (event: MapEvent) => void;
+  onDragEnd?: (event: MapEvent) => void;
+
+  rotation?: number;
+  zIndex?: number;
+}
 interface State {
   region?: Region;
-  markers?: MarkerProps[];
+  markers?: ownMarkerProps[];
   coordinate?: LatLng;
 }
 interface owrRefObject<T> {
   current: T | null;
 }
-const actions = [
-  {
-    text: 'Accessibility',
-    name: 'bt_accessibility',
-    position: 2,
-  },
-  {
-    text: 'Language',
-    name: 'bt_language',
-    position: 1,
-  },
-  {
-    text: 'Location',
-    name: 'bt_room',
-    position: 3,
-  },
-  {
-    text: 'Video',
-    name: 'bt_videocam',
-    position: 4,
-  },
-];
+
+// const actions = [
+//   {
+//     text: 'Language',
+//     name: 'bt_language',
+//     position: 1,
+//   }
+// ];
 
 export default class MapScreen extends React.Component<Props, State> {
   mapRef: owrRefObject<MapView>;
@@ -48,18 +69,7 @@ export default class MapScreen extends React.Component<Props, State> {
         latitudeDelta: 0.0922,
         longitudeDelta: 0.0421,
       },
-      markers: [
-        {
-          identifier: '0',
-          coordinate: {
-            latitude: 45.760696,
-            longitude: 21.226788,
-          },
-          draggable: false,
-          title: 'title',
-          description: 'description',
-        },
-      ],
+      markers: [],
     };
     this.getInitialState = this.getInitialState.bind(this);
     this.mapRef = React.createRef();
@@ -84,20 +94,35 @@ export default class MapScreen extends React.Component<Props, State> {
     return this.state.coordinate === nextState.coordinate;
   }
 
-  updateUserLocation = succ => {
-    // console.log(succ)
-  };
-
   addMarker = (lat, long) => {
     const { markers } = this.state;
-    markers.push({
-      identifier: 'temp',
-      coordinate: { latitude: lat, longitude: long },
-      title: '',
-      description: '',
-      draggable: true,
-    });
-    this.setState({ markers });
+    let tempMarker = markers.find(obj => obj.identifier === "temp");
+    if (typeof (tempMarker) === "undefined")
+      tempMarker = {
+        identifier: "temp",
+        coordinate: { latitude: lat, longitude: long },
+        title: "",
+        description: "",
+        draggable: true,
+        icon: "ball"
+      };
+    else {
+      markers.splice(markers.indexOf(tempMarker), 1);
+      tempMarker.coordinate = { latitude: lat, longitude: long };
+    }
+    markers.push(tempMarker);
+    this.mapRef.current.animateToRegion({
+      latitude: lat,
+      longitude: long,
+      latitudeDelta: 0.005,
+      longitudeDelta: 0.005,
+    }, 600);
+    setTimeout(() => {
+      this.mapRef.current.getCamera().then(camera => {
+        this.setState({ markers });
+        this.mapRef.current.setCamera(camera);
+      });
+    }, 650);
   };
 
   getMarkers = () => {
@@ -107,9 +132,9 @@ export default class MapScreen extends React.Component<Props, State> {
       .then(snap => {
         const markers = [];
         snap.forEach(entry => {
-          const { coordinate, title, description } = entry.data();
+          const { coordinate, title, description, icon } = entry.data();
           const { id } = entry;
-          markers.push({ coordinate, title, description, identifier: id, draggable: false });
+          markers.push({ coordinate, title, description, identifier: id, draggable: false, icon });
         });
         this.setState({ markers });
       });
@@ -137,9 +162,14 @@ export default class MapScreen extends React.Component<Props, State> {
             this.mapRef.current = r;
           }}
           region={this.state.region}
-          showsUserLocation
           showsMyLocationButton
           showsCompass
+          onPress={(mapEvent) => {
+            // issue when clicking on a marker, it will add a temp one on it
+            // if a marker is within a minimum distance of my click, we should not add another one
+            // gotta figure out
+            this.addMarker(mapEvent.nativeEvent.coordinate.latitude, mapEvent.nativeEvent.coordinate.longitude)
+          }}
           zoomControlEnabled
           toolbarEnabled
           onMarkerDragEnd={e => this.setState(e.nativeEvent)}
@@ -151,12 +181,16 @@ export default class MapScreen extends React.Component<Props, State> {
               title={marker.title}
               description={marker.description}
               draggable={marker.draggable}
-            />
+            >
+              <View>
+                {iconName2Icon[marker.icon.toString()]}
+              </View>
+            </Marker>
           ))}
         </MapView>
         <FloatingAction
-          actions={actions}
-          onPressItem={name => {
+          showBackground={false}
+          onOpen={() => {
             navigator.geolocation.getCurrentPosition(position => {
               this.mapRef.current.animateToRegion(
                 {
@@ -170,6 +204,7 @@ export default class MapScreen extends React.Component<Props, State> {
               this.addMarker(position.coords.latitude, position.coords.longitude);
             });
           }}
+          onClose={() => this.mapRef.current.animateToRegion(this.getInitialState().region, 600)}
         />
       </View>
     );
