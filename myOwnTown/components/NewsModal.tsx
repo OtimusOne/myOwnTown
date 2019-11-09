@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, Image, ScrollView } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Overlay } from 'react-native-elements';
+import HTML from 'react-native-render-html';
 import { AnnouncementProps } from './Announcement';
 import { firestore, storage } from '../dbconfig';
 
@@ -16,7 +17,6 @@ interface newsModalProps {
 interface newsModalState {
   isVisible: boolean;
   imgUrl: string;
-  readyToShow: boolean;
 }
 
 const timeAgo = (time: any): string => {
@@ -111,6 +111,7 @@ export default class NewsModal extends React.Component<newsModalProps, newsModal
         onBackdropPress={this.onClose}
         overlayStyle={{
           height: 'auto',
+          maxHeight: '75%',
           borderWidth: 1,
           borderColor: '#B71C1C',
           borderRadius: 20,
@@ -134,18 +135,10 @@ export default class NewsModal extends React.Component<newsModalProps, newsModal
             </Text>
           </View>
 
-          <View>
-            <Text
-              style={{
-                paddingLeft: 5,
-                paddingVertical: 5,
-                fontSize: 16,
-                textAlign: 'justify',
-              }}
-            >
-              {this.props.description}
-            </Text>
-          </View>
+          <HTML
+            style={{ paddingLeft: 5, paddingVertical: 5, fontSize: 16, alignSelf: 'center' }}
+            html={this.props.description}
+          />
 
           {this.state.imgUrl && (
             <Image
