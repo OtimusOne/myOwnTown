@@ -168,10 +168,8 @@ export default class MapScreen extends React.Component<Props, State> {
             // issue when clicking on a marker, it will add a temp one on it
             // if a marker is within a minimum distance of my click, we should not add another one
             // gotta figure out
-            this.addMarker(mapEvent.nativeEvent.coordinate.latitude, mapEvent.nativeEvent.coordinate.longitude)
+            // this.addMarker(mapEvent.nativeEvent.coordinate.latitude, mapEvent.nativeEvent.coordinate.longitude)
           }}
-          zoomControlEnabled
-          toolbarEnabled
           onMarkerDragEnd={e => this.setState(e.nativeEvent)}
         >
           {this.state.markers.map(marker => (
