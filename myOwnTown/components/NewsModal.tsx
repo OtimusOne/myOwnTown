@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { View, Text, Image, ScrollView } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Overlay } from 'react-native-elements';
-import * as Progress from 'react-native-progress';
 import { AnnouncementProps } from './Announcement';
 import { firestore, storage } from '../dbconfig';
 
