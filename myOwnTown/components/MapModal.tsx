@@ -1,8 +1,11 @@
 import React from 'react';
-import { View, Text, Image } from 'react-native';
+import {View, Text, Image, ScrollView, Dimensions} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Overlay } from 'react-native-elements';
 import * as Progress from 'react-native-progress';
+import HTML from 'react-native-render-html';
+import { material } from 'react-native-typography'
+
 import {firestore, storage} from "../dbconfig"
 
 
@@ -19,6 +22,8 @@ interface State {
     imgUrl:string,
     isVisible: boolean,
     readyToShow: boolean,
+    imgHeight: number,
+    imgWidth: number
 }
 
 export default class MapModalScreen extends React.Component<MapModalProps, State> {
@@ -30,7 +35,9 @@ export default class MapModalScreen extends React.Component<MapModalProps, State
             text: null,
             imgUrl: null,
             isVisible: this.props.isVisible,
-            readyToShow:false
+            readyToShow:false,
+            imgHeight: 1,
+            imgWidth: 1
         }
     }
 
@@ -47,21 +54,31 @@ export default class MapModalScreen extends React.Component<MapModalProps, State
 
     render() {
         return (
-                <Overlay isVisible={this.state.isVisible} onBackdropPress={this.props.closeModal}>
-                    <View>
+                <Overlay isVisible={this.state.isVisible}
+                         onBackdropPress={this.props.closeModal}
+                         overlayStyle={{
+                             height: 'auto',
+                             maxHeight:"80%",
+                             borderWidth: 1,
+                             borderColor: '#388E3C',
+                             borderRadius: 20,
+                         }}>
+                    <ScrollView>
                         {this.state.readyToShow ?
                             <View>
-                                <Text>Hello {this.state.title}, we got this {this.state.text}, and
-                                    this {this.state.description},
-                                    aaaand this </Text>
+                                <Text style={[{alignSelf:"center"},material.title]}>{this.state.title}</Text>
+                                <Text style={[{alignSelf:"center"},material.subheading]}>{this.state.description}</Text>
+
+                                <HTML style={{alignSelf:"center"}} html = {this.state.text} imagesMaxWidth={Dimensions.get('window').width - 30}/>
                             </View>
                             : <Progress.Pie
+                                style={{alignSelf:"center"}}
                                 progress={80}
                                 indeterminate
                             />
                         }
-                        <Image style={{height: 200, width: 200}} source={{uri: this.state.imgUrl}} onLoadEnd={() => this.setState({readyToShow:true})}/>
-                    </View>
+                        <Image style={{height: this.state.imgHeight, width: this.state.imgWidth, alignSelf:"center"}} source={{uri: this.state.imgUrl}} onLoadEnd={() => this.setState({readyToShow:true, imgHeight:0, imgWidth:0})}/>
+                    </ScrollView>
                 </Overlay>
         )
     }
