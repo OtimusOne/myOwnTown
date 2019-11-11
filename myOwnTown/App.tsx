@@ -4,6 +4,7 @@ import { Icon } from 'react-native-elements';
 import BottomNavigation, { FullTab } from 'react-native-material-bottom-navigation';
 import NewsScreen from './screens/NewsScreen';
 import MapScreen from './screens/MapScreen';
+import ProfileScreen from './screens/ProfileScreen';
 
 interface Props {}
 interface State {
@@ -34,6 +35,13 @@ export default class App extends React.Component<Props, State> {
       barColor: '#E64A19',
       pressColor: 'rgba(255, 255, 255, 0.16)',
     },
+    {
+      key: 'user',
+      icon: '3d-rotation',
+      label: 'Profil',
+      barColor: '#2583e6',
+      pressColor: 'rgba(255, 255, 255, 0.16)',
+    },
   ];
 
   constructor(props) {
@@ -61,6 +69,7 @@ export default class App extends React.Component<Props, State> {
           {this.state.activeTab === 'votes' && (
             <Image resizeMode="contain" style={{ width: '100%' }} source={redditImage} />
           )}
+          {this.state.activeTab === "user" && <ProfileScreen />}
         </View>
         <BottomNavigation
           onTabPress={newTab => this.setState({ activeTab: newTab.key.toString() })}
