@@ -4,8 +4,9 @@ import { Icon } from 'react-native-elements';
 import BottomNavigation, { FullTab } from 'react-native-material-bottom-navigation';
 import NewsScreen from './screens/NewsScreen';
 import MapScreen from './screens/MapScreen';
+import VotesScreen from './screens/VotesScreen';
 
-interface Props {}
+interface Props { }
 interface State {
   activeTab: string;
 }
@@ -58,9 +59,7 @@ export default class App extends React.Component<Props, State> {
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
           {this.state.activeTab === 'map' && <MapScreen />}
           {this.state.activeTab === 'news' && <NewsScreen />}
-          {this.state.activeTab === 'votes' && (
-            <Image resizeMode="contain" style={{ width: '100%' }} source={redditImage} />
-          )}
+          {this.state.activeTab === 'votes' && <VotesScreen />}
         </View>
         <BottomNavigation
           onTabPress={newTab => this.setState({ activeTab: newTab.key.toString() })}
