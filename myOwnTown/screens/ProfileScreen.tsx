@@ -174,7 +174,8 @@ export default class ProfileScreen extends React.Component<Props, State> {
                                 <View>
                                     <Image
                                         /* eslint-disable-next-line global-require */
-                                        style={{height:150, width:SCREEN_WIDTH - 30, resizeMode:"cover"}}
+                                        source={require("../assets/img.png")}
+                                        style={{height:150, width:150, resizeMode:"cover"}}
                                     />
                                 </View>
                             </View>

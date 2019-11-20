@@ -5,6 +5,7 @@ import BottomNavigation, { FullTab } from 'react-native-material-bottom-navigati
 import NewsScreen from './screens/NewsScreen';
 import MapScreen from './screens/MapScreen';
 import ProfileScreen from './screens/ProfileScreen';
+import {auth} from "./dbconfig";
 
 interface Props {}
 interface State {
@@ -47,6 +48,11 @@ export default class App extends React.Component<Props, State> {
   constructor(props) {
     super(props);
     this.state = { activeTab: 'map' };
+    auth.onAuthStateChanged((user) =>
+    {
+      if(user)
+        alert("User logged in");
+    })
   }
 
   renderIcon = (icon: string) => () => <Icon size={24} color="white" name={icon} />;
@@ -59,6 +65,7 @@ export default class App extends React.Component<Props, State> {
       renderIcon={this.renderIcon(tab.icon)}
     />
   );
+
 
   render() {
     return (
