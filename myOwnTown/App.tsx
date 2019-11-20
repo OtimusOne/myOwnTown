@@ -4,6 +4,8 @@ import { Icon } from 'react-native-elements';
 import BottomNavigation, { FullTab } from 'react-native-material-bottom-navigation';
 import NewsScreen from './screens/NewsScreen';
 import MapScreen from './screens/MapScreen';
+import ProfileScreen from './screens/ProfileScreen';
+import {auth} from "./dbconfig";
 
 interface Props {}
 interface State {
@@ -34,11 +36,23 @@ export default class App extends React.Component<Props, State> {
       barColor: '#E64A19',
       pressColor: 'rgba(255, 255, 255, 0.16)',
     },
+    {
+      key: 'user',
+      icon: '3d-rotation',
+      label: 'Profil',
+      barColor: '#2583e6',
+      pressColor: 'rgba(255, 255, 255, 0.16)',
+    },
   ];
 
   constructor(props) {
     super(props);
     this.state = { activeTab: 'map' };
+    auth.onAuthStateChanged((user) =>
+    {
+      if(user)
+        alert("User logged in");
+    })
   }
 
   renderIcon = (icon: string) => () => <Icon size={24} color="white" name={icon} />;
@@ -52,6 +66,7 @@ export default class App extends React.Component<Props, State> {
     />
   );
 
+
   render() {
     return (
       <View style={{ flex: 1, marginTop: Platform.OS === 'ios' ? 24 : 0 }}>
@@ -61,6 +76,7 @@ export default class App extends React.Component<Props, State> {
           {this.state.activeTab === 'votes' && (
             <Image resizeMode="contain" style={{ width: '100%' }} source={redditImage} />
           )}
+          {this.state.activeTab === "user" && <ProfileScreen />}
         </View>
         <BottomNavigation
           onTabPress={newTab => this.setState({ activeTab: newTab.key.toString() })}
