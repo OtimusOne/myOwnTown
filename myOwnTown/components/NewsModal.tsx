@@ -62,7 +62,7 @@ export default class NewsModal extends React.Component<newsModalProps, newsModal
           maxHeight: '75%',
           borderWidth: 1,
           borderColor: '#B71C1C',
-          borderRadius: 20,
+          borderRadius: 16,
         }}
       >
         <ScrollView>

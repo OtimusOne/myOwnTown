@@ -23,7 +23,7 @@ const Announcement: React.SFC<AnnouncementProps> = Props => {
         width: '95%',
         borderWidth: 1,
         borderColor: '#B71C1C',
-        borderRadius: 20,
+        borderRadius: 16,
         margin: 5,
         padding: 5,
       }}
