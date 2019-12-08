@@ -12,4 +12,5 @@ export const iconName2Icon = {
   music: <Icon size={25} name="music" type="font-awesome" color="purple" />,
   book: <Icon size={25} name="book" type="font-awesome" color="#f50" />,
   computer: <Icon size={25} name="computer" type="material-cons" color="blue" />,
+  traffic: <Icon size={25} name="car" type="font-awesome" color="purple" />,
 };

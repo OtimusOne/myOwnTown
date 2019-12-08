@@ -100,12 +100,15 @@ export default class MapScreen extends React.Component<Props, State> {
 
   componentDidMount(): void {
     this.getMarkers();
+    navigator.geolocation.getCurrentPosition(position => {
+      this.setState({ coordinate: position.coords });
+    });
   }
 
   shouldComponentUpdate(nextProps, nextState) {
     return true;
   }
-
+  /*
   addMarker = (lat, long) => {
     const { markers } = this.state;
     let tempMarker = markers.find(obj => obj.identifier === 'temp');
@@ -139,6 +142,7 @@ export default class MapScreen extends React.Component<Props, State> {
       });
     }, 650);
   };
+  */
 
   getMarkers = () => {
     firestore
@@ -236,9 +240,9 @@ export default class MapScreen extends React.Component<Props, State> {
         <FloatingAction
           showBackground={false}
           onOpen={() => {
+            this.setState({ addMarkerModalVisible: true });
             navigator.geolocation.getCurrentPosition(position => {
               this.setState({ coordinate: position.coords });
-              /*
               this.mapRef.current.animateToRegion(
                 {
                   latitude: position.coords.latitude,
@@ -248,8 +252,7 @@ export default class MapScreen extends React.Component<Props, State> {
                 },
                 100,
               );
-              */
-              this.setState({ addMarkerModalVisible: true });
+
               // this.addMarker(position.coords.latitude, position.coords.longitude);
             });
           }}

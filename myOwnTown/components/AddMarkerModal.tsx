@@ -26,6 +26,7 @@ export default class NewsModal extends React.Component<addMarkerModalProps, addM
       isVisible: true,
       isTitleValid: true,
       isDescriptionValid: true,
+      type: 'info',
     };
     this.onClose = this.onClose.bind(this);
     this.submitMarker = this.submitMarker.bind(this);
@@ -92,12 +93,14 @@ export default class NewsModal extends React.Component<addMarkerModalProps, addM
           </Text>
           <Picker
             selectedValue={this.state.type}
-            style={{ height: 50, width: 200 }}
+            style={{ height: 50, width: '100%' }}
             onValueChange={(itemValue, itemIndex) => this.setState({ type: itemValue })}
           >
-            <Picker.Item label="Warning" value="warning" />
+            <Picker.Item label="Information" value="info" />
             <Picker.Item label="Announcement" value="exclamation" />
-            <Picker.Item label="Event" value="star" />
+            <Picker.Item label="Warning" value="warning" />
+            <Picker.Item label="Traffic event" value="traffic" />
+            <Picker.Item label="Cultural event" value="star" />
           </Picker>
           <Input
             value={this.state.title}
