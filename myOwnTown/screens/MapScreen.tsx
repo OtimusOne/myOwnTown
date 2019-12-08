@@ -1,7 +1,6 @@
 import React from 'react';
 import MapView, {
   AnimatedRegion,
-  Callout,
   LatLng,
   MapEvent,
   Marker,
@@ -13,6 +12,7 @@ import { FloatingAction } from 'react-native-floating-action';
 import { firestore } from '../dbconfig';
 import { iconName2Icon } from '../iconTranslate';
 import MapModal from '../components/MapModal';
+import AddMarkerModal from '../components/AddMarkerModal';
 
 interface Props {}
 interface ownMarkerProps {
@@ -48,9 +48,10 @@ interface ownMarkerProps {
 interface State {
   region?: Region;
   markers?: ownMarkerProps[];
-  coordinate?: LatLng;
+  coordinate?: Coordinates;
   modalVisible: boolean;
   currentID: string;
+  addMarkerModalVisible?: boolean;
 }
 interface owrRefObject<T> {
   current: T | null;
@@ -79,6 +80,8 @@ export default class MapScreen extends React.Component<Props, State> {
       markers: [],
       modalVisible: false,
       currentID: null,
+      addMarkerModalVisible: false,
+      coordinate: undefined,
     };
     this.getInitialState = this.getInitialState.bind(this);
     this.mapRef = React.createRef();
@@ -140,6 +143,7 @@ export default class MapScreen extends React.Component<Props, State> {
   getMarkers = () => {
     firestore
       .collection('markers')
+      .where('approved', '==', true)
       .get()
       .then(snap => {
         const markers = [];
@@ -167,6 +171,11 @@ export default class MapScreen extends React.Component<Props, State> {
       });
   };
 
+  handleCloseModal = () => {
+    this.setState({ addMarkerModalVisible: false });
+    this.getMarkers();
+  };
+
   render() {
     return (
       <View
@@ -189,6 +198,7 @@ export default class MapScreen extends React.Component<Props, State> {
             this.mapRef.current = r;
           }}
           region={this.state.region}
+          showsUserLocation
           showsMyLocationButton
           showsCompass
           onPress={mapEvent => {
@@ -208,12 +218,15 @@ export default class MapScreen extends React.Component<Props, State> {
               draggable={marker.draggable}
               onCalloutPress={async () => {
                 await this.setState({ modalVisible: true, currentID: marker.identifier });
-                this.mapRef.current.animateToRegion({
-                  latitude: Number(marker.coordinate.latitude),
-                  longitude: Number(marker.coordinate.longitude),
-                  latitudeDelta: 0.005,
-                  longitudeDelta: 0.005,
-                });
+                this.mapRef.current.animateToRegion(
+                  {
+                    latitude: Number(marker.coordinate.latitude),
+                    longitude: Number(marker.coordinate.longitude),
+                    latitudeDelta: 0.005,
+                    longitudeDelta: 0.005,
+                  },
+                  1000,
+                );
               }}
             >
               <View>{iconName2Icon[marker.icon.toString()]}</View>
@@ -224,6 +237,8 @@ export default class MapScreen extends React.Component<Props, State> {
           showBackground={false}
           onOpen={() => {
             navigator.geolocation.getCurrentPosition(position => {
+              this.setState({ coordinate: position.coords });
+              /*
               this.mapRef.current.animateToRegion(
                 {
                   latitude: position.coords.latitude,
@@ -231,14 +246,24 @@ export default class MapScreen extends React.Component<Props, State> {
                   latitudeDelta: 0.005,
                   longitudeDelta: 0.005,
                 },
-                1000,
+                100,
               );
+              */
+              this.setState({ addMarkerModalVisible: true });
               // this.addMarker(position.coords.latitude, position.coords.longitude);
             });
           }}
           color="#388E3C"
-          onClose={() => this.mapRef.current.animateToRegion(this.getInitialState().region, 600)}
+          onClose={() => {
+            this.mapRef.current.animateToRegion(this.getInitialState().region, 600);
+          }}
         />
+        {this.state.addMarkerModalVisible && (
+          <AddMarkerModal
+            handleClose={() => this.handleCloseModal()}
+            coordinate={this.state.coordinate}
+          />
+        )}
         {this.state.modalVisible && (
           <MapModal
             id={this.state.currentID}
