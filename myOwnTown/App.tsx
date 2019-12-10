@@ -4,12 +4,14 @@ import { Icon } from 'react-native-elements';
 import BottomNavigation, { FullTab } from 'react-native-material-bottom-navigation';
 import NewsScreen from './screens/NewsScreen';
 import MapScreen from './screens/MapScreen';
-import ProfileScreen from './screens/ProfileScreen';
+import VotesScreen from './screens/VotesScreen';
+import ProfileScreen from './screens/ProfilScreen';
 import { auth } from './dbconfig';
 
 interface Props {}
 interface State {
   activeTab: string;
+  uid: string;
 }
 const redditImage = require('./assets/reddit.jpg');
 
@@ -48,9 +50,10 @@ export default class App extends React.Component<Props, State> {
 
   constructor(props) {
     super(props);
-    this.state = { activeTab: 'map' };
+    this.state = { activeTab: 'map', uid: null };
     auth.onAuthStateChanged(user => {
-      if (user) alert('User logged in');
+      if (user !== null) this.setState({ uid: user.uid });
+      else this.setState({ uid: null });
     });
   }
 
@@ -71,12 +74,10 @@ export default class App extends React.Component<Props, State> {
     return (
       <View style={{ flex: 1, marginTop: Platform.OS === 'ios' ? 24 : 0 }}>
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          {this.state.activeTab === 'map' && <MapScreen />}
-          {this.state.activeTab === 'news' && <NewsScreen />}
-          {this.state.activeTab === 'votes' && (
-            <Image resizeMode="contain" style={{ width: '100%' }} source={redditImage} />
-          )}
-          {this.state.activeTab === 'user' && <ProfileScreen />}
+          {this.state.activeTab === 'map' && <MapScreen uid={this.state.uid} />}
+          {this.state.activeTab === 'news' && <NewsScreen uid={this.state.uid} />}
+          {this.state.activeTab === 'votes' && <VotesScreen uid={this.state.uid} />}
+          {this.state.activeTab === 'user' && <ProfileScreen uid={this.state.uid} />}
         </View>
         <BottomNavigation
           onTabPress={newTab => this.setState({ activeTab: newTab.key.toString() })}

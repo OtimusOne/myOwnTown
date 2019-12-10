@@ -76,17 +76,25 @@ export default class NewsModal extends React.Component<newsModalProps, newsModal
             <Text
               style={{
                 paddingHorizontal: 5,
-                fontSize: 22,
+                fontSize: 20,
+                flex: 1,
+                flexWrap: 'wrap',
               }}
             >
               {this.props.title}
             </Text>
           </View>
 
-          <HTML
-            style={{ paddingLeft: 5, paddingVertical: 5, fontSize: 16, alignSelf: 'center' }}
-            html={this.props.description}
-          />
+          <Text
+            style={{
+              paddingVertical: 5,
+              fontSize: 13,
+              alignSelf: 'center',
+              textAlign: 'justify',
+            }}
+          >
+            {this.props.description}
+          </Text>
 
           {this.state.imgUrl && (
             <Image
