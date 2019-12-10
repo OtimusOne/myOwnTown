@@ -35,7 +35,9 @@ const TabSelector = ({ selected }) => {
 UIManager.setLayoutAnimationEnabledExperimental &&
 UIManager.setLayoutAnimationEnabledExperimental(true);
 
-interface Props {}
+interface Props {
+    uid:string
+}
 
 interface State {
     email:string,

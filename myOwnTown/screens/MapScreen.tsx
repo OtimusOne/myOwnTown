@@ -14,7 +14,9 @@ import { firestore } from '../dbconfig';
 import { iconName2Icon } from '../iconTranslate';
 import MapModal from '../components/MapModal';
 
-interface Props {}
+interface Props {
+  uid:string
+}
 interface ownMarkerProps {
   identifier?: string;
   reuseIdentifier?: string;

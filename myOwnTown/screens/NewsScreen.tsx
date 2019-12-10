@@ -6,7 +6,9 @@ import MarqueeText from 'react-native-marquee';
 import Announcement, { AnnouncementProps } from '../components/Announcement';
 import { firestore } from '../dbconfig';
 
-interface Props {}
+interface Props {
+    uid:string
+}
 interface State {
   displayedPosts: AnnouncementProps[];
   loadedPosts: AnnouncementProps[];
