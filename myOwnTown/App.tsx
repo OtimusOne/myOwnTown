@@ -52,8 +52,10 @@ export default class App extends React.Component<Props, State> {
     this.state = { activeTab: 'map', uid:null};
     auth.onAuthStateChanged((user) =>
     {
-      if(user!=null)
+        if(user !== null)
         this.setState({uid:user.uid})
+      else
+        this.setState({uid:null})
     })
   }
 
