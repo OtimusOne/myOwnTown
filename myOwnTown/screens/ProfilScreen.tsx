@@ -1,11 +1,12 @@
 import React, { useEffect } from 'react';
 import { View, Text, FlatList } from 'react-native';
 import ignoreWarnings from 'react-native-ignore-warnings';
+import {Button} from "react-native-elements"
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MarqueeText from 'react-native-marquee';
 import Announcement, { AnnouncementProps } from '../components/Announcement';
 import LoginScreen from './LoginScreen';
-import { firestore } from '../dbconfig';
+import {auth, firestore} from '../dbconfig';
 
 interface Props {
     uid:string
@@ -51,9 +52,7 @@ export default class NewsScreen extends React.Component<Props, State> {
       >
           {!this.state.loggedIn ? <LoginScreen/> :
               <View>
-                  <Text>
-                      Bravo
-                  </Text>
+                  <Button title={"Logout"} onPress={() => auth.signOut().then(()=>this.forceUpdate())}/>
               </View>
           }
       </View>
