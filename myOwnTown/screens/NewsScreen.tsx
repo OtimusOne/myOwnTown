@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { View, Text, FlatList } from 'react-native';
 import ignoreWarnings from 'react-native-ignore-warnings';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -33,39 +33,23 @@ export default class NewsScreen extends React.Component<Props, State> {
     firestore
       .collection('news')
       .orderBy('createdOn', 'desc')
-      .limit(this.state.limit)
+      .limit(this.state.limit * 2)
       .get()
       .then(snap => {
-        const displayedPosts = [];
+        const posts = [];
         snap.forEach(entry => {
           const { title, description, createdOn, icon } = entry.data();
           const { id } = entry;
           const date = createdOn.toDate();
-          displayedPosts.push({ title, description, id, createdOn: date, icon });
+          posts.push({ title, description, id, createdOn: date, icon });
         });
-        const lastPost = displayedPosts.slice(-1)[0];
-        this.setState(prevState => ({
-          displayedPosts,
-          lastDisplayed: lastPost ? lastPost.createdOn : prevState.lastDisplayed,
-        }));
-      });
-    firestore
-      .collection('news')
-      .orderBy('createdOn', 'desc')
-      .startAfter(this.state.lastDisplayed)
-      .limit(this.state.limit)
-      .get()
-      .then(snap => {
-        const loadedPosts = [];
-        snap.forEach(entry => {
-          const { title, description, createdOn, icon } = entry.data();
-          const { id } = entry;
-          const date = createdOn.toDate();
-          loadedPosts.push({ title, description, id, createdOn: date, icon });
-        });
+
+        const displayedPosts = posts.slice(0, this.state.limit);
+        const loadedPosts = posts.slice(this.state.limit, this.state.limit * 2);
         const lastPost = loadedPosts.slice(-1)[0];
         this.setState(prevState => ({
           loadedPosts,
+          displayedPosts,
           lastDisplayed: lastPost ? lastPost.createdOn : prevState.lastDisplayed,
         }));
       });
@@ -148,7 +132,7 @@ export default class NewsScreen extends React.Component<Props, State> {
           keyExtractor={item => item.id}
           onEndReached={this.fetchPosts}
           onEndReachedThreshold={0.1}
-          onScrollEndDrag={this.fetchPosts}
+          // onScrollEndDrag={this.fetchPosts}
         />
         <MarqueeText
           style={{

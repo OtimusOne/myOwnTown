@@ -39,10 +39,11 @@ export default class App extends React.Component<Props, State> {
     },
     {
       key: 'user',
-      icon: '3d-rotation',
+      icon: 'user',
       label: 'Profil',
       barColor: '#2583e6',
       pressColor: 'rgba(255, 255, 255, 0.16)',
+      type: 'font-awesome',
     },
   ];
 
@@ -56,14 +57,16 @@ export default class App extends React.Component<Props, State> {
     })
   }
 
-  renderIcon = (icon: string) => () => <Icon size={24} color="white" name={icon} />;
+  renderIcon = (icon: string, type: string) => () => (
+    <Icon size={24} color="white" name={icon} type={type} />
+  );
 
   renderTab = ({ tab, isActive }) => (
     <FullTab
       isActive={isActive}
       key={tab.key}
       label={tab.label}
-      renderIcon={this.renderIcon(tab.icon)}
+      renderIcon={this.renderIcon(tab.icon, tab.type)}
     />
   );
 
