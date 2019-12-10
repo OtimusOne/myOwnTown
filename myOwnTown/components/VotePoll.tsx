@@ -68,7 +68,7 @@ export default class VotePoll extends React.Component<VotePollProps, State> {
         </View>
         <RadioForm animation formHorizontal={false} disabled>
           {this.state.radioProps.map((obj, i) => (
-            <RadioButton key={i} labelHorizontal selectedButtonColor="#E64A19" disabled>
+            <RadioButton labelHorizontal selectedButtonColor="#E64A19" disabled>
               <RadioButtonInput
                 obj={obj}
                 index={i}
@@ -138,5 +138,4 @@ function onPressVote(selectedOption, entryId, displayedVotes) {
     .update({
       votes: newVotes,
     });
-  return 0;
 }

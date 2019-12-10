@@ -31,9 +31,9 @@ export default class VotesScreen extends React.Component<Props, State> {
           const date = createdOn.toDate();
           displayedPolls.push({ title, id, createdOn: date, options, votes });
         });
-        this.setState(prevState => ({
+        this.setState({
           displayedPolls,
-        }));
+        });
       });
   }
 
