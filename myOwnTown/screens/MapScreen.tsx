@@ -7,7 +7,8 @@ import MapView, {
   Point,
   Region,
 } from 'react-native-maps';
-import { View, ImageURISource, ImageRequireSource, Text } from 'react-native';
+import { View, ImageURISource, ImageRequireSource } from 'react-native';
+import { Icon } from 'react-native-elements';
 import { FloatingAction } from 'react-native-floating-action';
 import { firestore } from '../dbconfig';
 import { iconName2Icon } from '../iconTranslate';
@@ -57,13 +58,15 @@ interface owrRefObject<T> {
   current: T | null;
 }
 
-// const actions = [
-//   {
-//     text: 'Language',
-//     name: 'bt_language',
-//     position: 1,
-//   }
-// ];
+const actions = [
+  {
+    text: 'Add Marker',
+    name: 'bt_marker',
+    position: 1,
+    color: '#388E3C',
+    icon: <Icon size={20} name="plus" type="font-awesome" color="#ffffff" />,
+  },
+];
 
 export default class MapScreen extends React.Component<Props, State> {
   mapRef: owrRefObject<MapView>;
@@ -105,9 +108,6 @@ export default class MapScreen extends React.Component<Props, State> {
     });
   }
 
-  shouldComponentUpdate(nextProps, nextState) {
-    return true;
-  }
   /*
   addMarker = (lat, long) => {
     const { markers } = this.state;
@@ -238,8 +238,9 @@ export default class MapScreen extends React.Component<Props, State> {
           ))}
         </MapView>
         <FloatingAction
+          actions={actions}
           showBackground={false}
-          onOpen={() => {
+          onPressItem={() => {
             this.setState({ addMarkerModalVisible: true });
             navigator.geolocation.getCurrentPosition(position => {
               this.setState({ coordinate: position.coords });
@@ -252,7 +253,6 @@ export default class MapScreen extends React.Component<Props, State> {
                 },
                 100,
               );
-
               // this.addMarker(position.coords.latitude, position.coords.longitude);
             });
           }}

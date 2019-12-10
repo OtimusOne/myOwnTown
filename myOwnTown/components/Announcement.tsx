@@ -50,6 +50,8 @@ const Announcement: React.SFC<AnnouncementProps> = Props => {
           style={{
             paddingLeft: 5,
             fontSize: 18,
+            flex: 1,
+            flexWrap: 'wrap',
           }}
         >
           {Props.title}
