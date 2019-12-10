@@ -94,7 +94,7 @@ export default class VotePoll extends React.Component<VotePollProps, State> {
                                     labelWrapStyle={{ marginTop: 10 }}
                                     disabled={this.state.hasVoted == true ? true : false}
                                 />
-                                <Text style={{ fontWeight: 'bold', marginLeft: 10, marginTop: 10 }}>{this.state.displayedVotes[i]} voturi</Text>
+                                <Text style={{display: this.state.hasVoted == true ? 'flex' : 'none', fontWeight: 'bold', marginLeft: 10, marginTop: 10 }}>{this.state.displayedVotes[i]} voturi</Text>
                             </RadioButton>
 
                         ))
