@@ -4,7 +4,9 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import VotePoll, { VotePollProps } from '../components/VotePoll';
 import { firestore } from '../dbconfig';
 
-interface Props {}
+interface Props {
+  uid: string;
+}
 
 interface State {
   displayedPolls: VotePollProps[];
@@ -76,6 +78,7 @@ export default class VotesScreen extends React.Component<Props, State> {
           extraData={this.state}
           renderItem={({ item }) => (
             <VotePoll
+              uid={this.props.uid}
               id={item.id}
               title={item.title}
               options={item.options}

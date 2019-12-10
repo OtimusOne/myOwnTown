@@ -8,6 +8,7 @@ import RadioForm, {
 import { firestore } from '../dbconfig';
 
 export interface VotePollProps {
+  uid: string;
   id: string;
   title: string;
   createdOn: Date;
@@ -30,12 +31,28 @@ export default class VotePoll extends React.Component<VotePollProps, State> {
       const label = this.props.options[i];
       auxRadioProps.push({ label, value: i });
     }
+
     this.state = {
       selectedOption: 0,
       radioProps: auxRadioProps,
       hasVoted: false,
       displayedVotes: this.props.votes,
     };
+  }
+
+  componentDidMount() {
+    let hasVotedCount = 0;
+    firestore
+      .collection('voted')
+      .where('userID', '==', this.props.uid)
+      .where('questionID', '==', this.props.id)
+      .get()
+      .then(snap => {
+        hasVotedCount = snap.size;
+      })
+      .then(() => {
+        this.setState({ hasVoted: hasVotedCount !== 0 });
+      });
   }
 
   render() {
@@ -68,7 +85,7 @@ export default class VotePoll extends React.Component<VotePollProps, State> {
         </View>
         <RadioForm animation formHorizontal={false} disabled>
           {this.state.radioProps.map((obj, i) => (
-            <RadioButton labelHorizontal selectedButtonColor="#E64A19" disabled>
+            <RadioButton key={i} labelHorizontal selectedButtonColor="#E64A19" disabled>
               <RadioButtonInput
                 obj={obj}
                 index={i}
@@ -83,7 +100,7 @@ export default class VotePoll extends React.Component<VotePollProps, State> {
                 buttonOuterSize={20}
                 buttonStyle={{}}
                 buttonWrapStyle={{ marginLeft: 10, marginTop: 10 }}
-                disabled={this.state.hasVoted === true}
+                disabled={this.state.hasVoted === true || this.props.uid === null}
               />
               <RadioButtonLabel
                 obj={obj}
@@ -93,7 +110,7 @@ export default class VotePoll extends React.Component<VotePollProps, State> {
                 }}
                 labelStyle={{ fontSize: 14, color: '#000000', paddingLeft: 5 }}
                 labelWrapStyle={{ marginTop: 10 }}
-                disabled={this.state.hasVoted === true}
+                disabled={this.state.hasVoted === true || this.props.uid === null}
               />
               <Text
                 style={{
@@ -117,9 +134,14 @@ export default class VotePoll extends React.Component<VotePollProps, State> {
           <Button
             title="Vote"
             color="#E64A19"
-            disabled={this.state.hasVoted === true}
+            disabled={this.state.hasVoted === true || this.props.uid === null}
             onPress={() => {
-              onPressVote(this.state.selectedOption, this.props.id, this.state.displayedVotes);
+              onPressVote(
+                this.state.selectedOption,
+                this.props.id,
+                this.props.uid,
+                this.state.displayedVotes,
+              );
               this.setState({ hasVoted: true });
             }}
           />
@@ -129,7 +151,7 @@ export default class VotePoll extends React.Component<VotePollProps, State> {
   }
 }
 
-function onPressVote(selectedOption, entryId, displayedVotes) {
+function onPressVote(selectedOption, entryId, userId, displayedVotes) {
   const newVotes = displayedVotes;
   newVotes[selectedOption] += 1;
   firestore
@@ -138,4 +160,9 @@ function onPressVote(selectedOption, entryId, displayedVotes) {
     .update({
       votes: newVotes,
     });
+  const docData = {
+    userID: userId,
+    questionID: entryId,
+  };
+  firestore.collection('voted').add(docData);
 }

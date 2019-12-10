@@ -15,7 +15,9 @@ import { iconName2Icon } from '../iconTranslate';
 import MapModal from '../components/MapModal';
 import AddMarkerModal from '../components/AddMarkerModal';
 
-interface Props {}
+interface Props {
+  uid: string;
+}
 interface ownMarkerProps {
   identifier?: string;
   reuseIdentifier?: string;
@@ -237,30 +239,32 @@ export default class MapScreen extends React.Component<Props, State> {
             </Marker>
           ))}
         </MapView>
-        <FloatingAction
-          actions={actions}
-          showBackground={false}
-          onPressItem={() => {
-            this.setState({ addMarkerModalVisible: true });
-            navigator.geolocation.getCurrentPosition(position => {
-              this.setState({ coordinate: position.coords });
-              this.mapRef.current.animateToRegion(
-                {
-                  latitude: position.coords.latitude,
-                  longitude: position.coords.longitude,
-                  latitudeDelta: 0.005,
-                  longitudeDelta: 0.005,
-                },
-                100,
-              );
-              // this.addMarker(position.coords.latitude, position.coords.longitude);
-            });
-          }}
-          color="#388E3C"
-          onClose={() => {
-            this.mapRef.current.animateToRegion(this.getInitialState().region, 600);
-          }}
-        />
+        {this.props.uid !== null && (
+          <FloatingAction
+            actions={actions}
+            showBackground={false}
+            onPressItem={() => {
+              this.setState({ addMarkerModalVisible: true });
+              navigator.geolocation.getCurrentPosition(position => {
+                this.setState({ coordinate: position.coords });
+                this.mapRef.current.animateToRegion(
+                  {
+                    latitude: position.coords.latitude,
+                    longitude: position.coords.longitude,
+                    latitudeDelta: 0.005,
+                    longitudeDelta: 0.005,
+                  },
+                  100,
+                );
+                // this.addMarker(position.coords.latitude, position.coords.longitude);
+              });
+            }}
+            color="#388E3C"
+            onClose={() => {
+              this.mapRef.current.animateToRegion(this.getInitialState().region, 600);
+            }}
+          />
+        )}
         {this.state.addMarkerModalVisible && (
           <AddMarkerModal
             handleClose={() => this.handleCloseModal()}
