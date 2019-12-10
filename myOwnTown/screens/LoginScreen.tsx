@@ -36,7 +36,6 @@ UIManager.setLayoutAnimationEnabledExperimental &&
 UIManager.setLayoutAnimationEnabledExperimental(true);
 
 interface Props {
-    uid:string
 }
 
 interface State {
@@ -57,7 +56,7 @@ interface owrInput<T> {
 }
 
 
-export default class ProfileScreen extends React.Component<Props, State> {
+export default class LoginScreen extends React.Component<Props, State> {
     emailInput: owrInput<Input>;
 
     passwordInput: owrInput<Input>;

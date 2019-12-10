@@ -4,7 +4,7 @@ import { Icon } from 'react-native-elements';
 import BottomNavigation, { FullTab } from 'react-native-material-bottom-navigation';
 import NewsScreen from './screens/NewsScreen';
 import MapScreen from './screens/MapScreen';
-import ProfileScreen from './screens/ProfileScreen';
+import ProfileScreen from './screens/ProfilScreen';
 import {auth} from "./dbconfig";
 
 interface Props {}
