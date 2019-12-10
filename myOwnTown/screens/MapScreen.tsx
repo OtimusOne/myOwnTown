@@ -209,8 +209,8 @@ export default class MapScreen extends React.Component<Props, State> {
               onCalloutPress={async () => {
                 await this.setState({ modalVisible: true, currentID: marker.identifier });
                 this.mapRef.current.animateToRegion({
-                  latitude: marker.coordinate.latitude,
-                  longitude: marker.coordinate.longitude,
+                  latitude: Number(marker.coordinate.latitude),
+                  longitude: Number(marker.coordinate.longitude),
                   latitudeDelta: 0.005,
                   longitudeDelta: 0.005,
                 });

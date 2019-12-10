@@ -19,3 +19,4 @@ firebase.initializeApp(firebaseConfig);
 // eslint-disable-next-line import/prefer-default-export
 export const firestore = firebase.firestore();
 export const storage = firebase.storage();
+export const auth = firebase.auth();

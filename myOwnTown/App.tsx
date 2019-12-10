@@ -5,8 +5,10 @@ import BottomNavigation, { FullTab } from 'react-native-material-bottom-navigati
 import NewsScreen from './screens/NewsScreen';
 import MapScreen from './screens/MapScreen';
 import VotesScreen from './screens/VotesScreen';
+import ProfileScreen from './screens/ProfileScreen';
+import { auth } from './dbconfig';
 
-interface Props { }
+interface Props {}
 interface State {
   activeTab: string;
 }
@@ -35,21 +37,34 @@ export default class App extends React.Component<Props, State> {
       barColor: '#E64A19',
       pressColor: 'rgba(255, 255, 255, 0.16)',
     },
+    {
+      key: 'user',
+      icon: 'user',
+      label: 'Profil',
+      barColor: '#2583e6',
+      pressColor: 'rgba(255, 255, 255, 0.16)',
+      type: 'font-awesome',
+    },
   ];
 
   constructor(props) {
     super(props);
     this.state = { activeTab: 'map' };
+    auth.onAuthStateChanged(user => {
+      if (user) alert('User logged in');
+    });
   }
 
-  renderIcon = (icon: string) => () => <Icon size={24} color="white" name={icon} />;
+  renderIcon = (icon: string, type: string) => () => (
+    <Icon size={24} color="white" name={icon} type={type} />
+  );
 
   renderTab = ({ tab, isActive }) => (
     <FullTab
       isActive={isActive}
       key={tab.key}
       label={tab.label}
-      renderIcon={this.renderIcon(tab.icon)}
+      renderIcon={this.renderIcon(tab.icon, tab.type)}
     />
   );
 
@@ -60,6 +75,7 @@ export default class App extends React.Component<Props, State> {
           {this.state.activeTab === 'map' && <MapScreen />}
           {this.state.activeTab === 'news' && <NewsScreen />}
           {this.state.activeTab === 'votes' && <VotesScreen />}
+          {this.state.activeTab === 'user' && <ProfileScreen />}
         </View>
         <BottomNavigation
           onTabPress={newTab => this.setState({ activeTab: newTab.key.toString() })}
