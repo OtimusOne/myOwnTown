@@ -75,7 +75,7 @@ export default class MapModalScreen extends React.Component<MapModalProps, State
               )}
               <Button
                 title="Directions"
-                buttonStyle={{ borderRadius: 30 }}
+                buttonStyle={{ borderRadius: 30, backgroundColor: '#388E3C' }}
                 onPress={() => {
                   if (Platform.OS === 'ios')
                     Linking.openURL(
