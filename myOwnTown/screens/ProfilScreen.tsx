@@ -1,18 +1,18 @@
-import React, { useEffect } from 'react';
-import { View, Text, FlatList } from 'react-native';
+import React from 'react';
+import { View, Text } from 'react-native';
 import ignoreWarnings from 'react-native-ignore-warnings';
-import {Button} from "react-native-elements"
-import Icon from 'react-native-vector-icons/FontAwesome';
-import MarqueeText from 'react-native-marquee';
-import Announcement, { AnnouncementProps } from '../components/Announcement';
+import {Button, Input} from "react-native-elements"
 import LoginScreen from './LoginScreen';
-import {auth, firestore} from '../dbconfig';
+import {auth} from '../dbconfig';
 
 interface Props {
     uid:string
 }
 interface State {
     loggedIn:boolean;
+    inputPassword:string,
+    inputDisplayName:string,
+    inputMail:string
 }
 
 ignoreWarnings('Setting a timer');
@@ -21,38 +21,96 @@ export default class NewsScreen extends React.Component<Props, State> {
   constructor(props) {
     super(props);
     this.state = {
-        loggedIn: false
+        loggedIn: false,
+        inputDisplayName:"",
+        inputMail:"",
+        inputPassword:""
     };
   }
 
+
   componentDidMount() {
-    if (this.props.uid == null)
-    {
-      this.setState({loggedIn:false});
-    }
-    else
-    {
-        this.setState({loggedIn:true});
-    }
+      this.getUID();
   }
 
-  shouldComponentUpdate(nextProps: Readonly<Props>, nextState: Readonly<State>, nextContext: any): boolean {
-      return ((this.state.loggedIn !== nextState.loggedIn) || (this.props.uid !== nextProps.uid))
+  componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<State>, snapshot?: any): void {
+      if(prevProps.uid !== this.props.uid)
+        this.getUID();
   }
+
+    getUID = () =>
+    {
+        if (this.props.uid == null)
+        {
+            this.setState({loggedIn:false});
+        }
+        else
+        {
+            this.getUserData();
+            this.setState({loggedIn:true});
+        }
+    };
+
+  getUserData = () =>
+  {
+      if(this.props.uid !== null)
+      {
+          this.setState({
+              inputDisplayName: auth.currentUser.displayName,
+              inputMail: auth.currentUser.email,
+          });
+      }
+  };
+
+  setUserData = () =>
+  {
+      if(this.state.inputDisplayName !== "")
+          auth.currentUser.updateProfile({displayName:this.state.inputDisplayName});
+      if(this.state.inputMail !== auth.currentUser.email)
+          auth.currentUser.updateEmail(this.state.inputMail);
+      if(this.state.inputPassword !== "" && this.state.inputPassword.length > 4)
+          auth.currentUser.updatePassword(this.state.inputPassword);
+  };
 
     render() {
     return (
-      <View
-        style={{
-          flex: 1,
-          height: '100%',
-          width: '100%',
-          alignItems: 'center',
-        }}
-      >
+        <View>
           {!this.state.loggedIn ? <LoginScreen/> :
-              <View>
-                  <Button title={"Logout"} onPress={() => auth.signOut().then(()=>this.forceUpdate())}/>
+            <View
+                style={{
+                    flex: 1,
+                    height: '100%',
+                    width: '100%',
+                    alignItems: 'center',
+                }}
+            >
+                <Text>Alo</Text>
+                  <Input
+                    placeholder="Numele cu car"
+                    value={this.state.inputDisplayName}
+                    onChangeText={inputDisplayName => this.setState({ inputDisplayName })}
+                    containerStyle={{
+                        borderBottomColor: 'rgba(0, 0, 0, 0.38)',
+                    }}
+                  />
+                  <Input
+                      placeholder="Adresa de maii"
+                      value={this.state.inputMail}
+                      onChangeText={inputMail => this.setState({ inputMail })}
+                      containerStyle={{
+                          borderBottomColor: 'rgba(0, 0, 0, 0.38)',
+                      }}
+                  />
+                  <Input
+                      placeholder="Parola "
+                      value={this.state.inputPassword}
+                      onChangeText={inputPassword => this.setState({ inputPassword })}
+                      containerStyle={{
+                          borderBottomColor: 'rgba(0, 0, 0, 0.38)',
+                      }}
+                  />
+                <Button title="Save" onPress={() => this.setUserData()}/>
+                <Button title="Logout" onPress={() => auth.signOut().then(()=>{})}/>
               </View>
           }
       </View>

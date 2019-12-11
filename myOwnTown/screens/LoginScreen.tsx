@@ -1,4 +1,4 @@
-import React, {Component, RefObject} from 'react';
+import React from 'react';
 import {
     StyleSheet,
     View,
@@ -9,7 +9,7 @@ import {
     Platform,
     KeyboardAvoidingView, Image, AsyncStorage,
 } from 'react-native';
-import {Input, Button, Icon, CheckBox, InputProps} from 'react-native-elements';
+import {Input, Button, Icon, CheckBox} from 'react-native-elements';
 import {SplashScreen} from "expo";
 import {auth} from "../dbconfig";
 
@@ -91,7 +91,7 @@ export default class LoginScreen extends React.Component<Props, State> {
     }
 
     checkText = () =>{
-        this.setState((prevState, props) => ({checked: !prevState.checked, isDisabled: !prevState.isDisabled}))
+        this.setState((prevState) => ({checked: !prevState.checked, isDisabled: !prevState.isDisabled}))
     };
 
     interpretError = (string) => {
@@ -103,6 +103,7 @@ export default class LoginScreen extends React.Component<Props, State> {
             case "auth/user-not-found": this.setState({isEmailValid: false, isLoading:false}); this.emailInput.current.shake(); break;
             case "auth/weak-password": this.setState({isPasswordValid: false, isLoading:false}); this.passwordInput.current.shake(); break;
             case "auth/wrong-password": this.setState({isPasswordValid: false, isLoading:false}); this.passwordInput.current.shake(); break;
+            // eslint-disable-next-line no-alert
             default: alert("The error might be ours, or you do not have internet connection. Contact us")
         }
     };
@@ -123,7 +124,7 @@ export default class LoginScreen extends React.Component<Props, State> {
                 .then(async () => {
                     this.setState({isLoading:false});
                     await AsyncStorage.setItem("newAcc", "Yes");
-
+                    
                 })
                 .catch((error) => this.interpretError(error.code));
         }
